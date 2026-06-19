@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body{margin:0;background:#1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:24px;font-family:-apple-system,sans-serif}
+.label{color:#fff;font-size:13px;opacity:0.6}
+canvas{border-radius:22%;box-shadow:0 8px 32px rgba(108,99,255,0.5)}
+.row{display:flex;gap:24px;align-items:center;flex-direction:column}
+button{background:#6C63FF;color:#fff;border:none;padding:12px 24px;border-radius:12px;font-size:14px;cursor:pointer;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="row">
+  <canvas id="c512" width="512" height="512"></canvas>
+  <div class="label">512×512 — icon-512.png</div>
+  <canvas id="c192" width="192" height="192"></canvas>
+  <div class="label">192×192 — icon-192.png</div>
+  <canvas id="c180" width="180" height="180"></canvas>
+  <div class="label">180×180 — icon-180.png (Apple Touch)</div>
+  <button onclick="downloadAll()">⬇️ دانلود همه آیکون‌ها</button>
+</div>
+
+<script>
+function drawIcon(canvas) {
+  const s = canvas.width;
+  const ctx = canvas.getContext('2d');
+  const r = s * 0.18;
+
+  // Background gradient
+  const grad = ctx.createLinearGradient(0, 0, s, s);
+  grad.addColorStop(0, '#7C74FF');
+  grad.addColorStop(1, '#5046E4');
+  ctx.fillStyle = grad;
+  roundRect(ctx, 0, 0, s, s, r);
+  ctx.fill();
+
+  // Inner glow circle
+  const glow = ctx.createRadialGradient(s*0.35, s*0.32, 0, s*0.5, s*0.5, s*0.55);
+  glow.addColorStop(0, 'rgba(255,255,255,0.12)');
+  glow.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = glow;
+  roundRect(ctx, 0, 0, s, s, r);
+  ctx.fill();
+
+  const u = s / 512; // unit scale
+
+  // Chart bars (background)
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  // bar 1
+  roundRectFill(ctx, 60*u, 280*u, 70*u, 170*u, 10*u);
+  // bar 2
+  roundRectFill(ctx, 155*u, 220*u, 70*u, 230*u, 10*u);
+  // bar 3
+  roundRectFill(ctx, 250*u, 160*u, 70*u, 290*u, 10*u);
+  // bar 4
+  roundRectFill(ctx, 345*u, 200*u, 70*u, 250*u, 10*u);
+
+  // Chart bars (foreground - white)
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  roundRectFill(ctx, 60*u, 310*u, 70*u, 140*u, 10*u);
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  roundRectFill(ctx, 155*u, 255*u, 70*u, 195*u, 10*u);
+  ctx.fillStyle = '#fff';
+  roundRectFill(ctx, 250*u, 190*u, 70*u, 260*u, 10*u);
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  roundRectFill(ctx, 345*u, 230*u, 70*u, 220*u, 10*u);
+
+  // Trend line
+  ctx.beginPath();
+  ctx.moveTo(95*u, 310*u);
+  ctx.lineTo(190*u, 248*u);
+  ctx.lineTo(285*u, 185*u);
+  ctx.lineTo(380*u, 218*u);
+  ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+  ctx.lineWidth = 8*u;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // Dot on line
+  ctx.beginPath();
+  ctx.arc(285*u, 185*u, 12*u, 0, Math.PI*2);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+
+  // Bottom line
+  ctx.beginPath();
+  ctx.moveTo(48*u, 450*u);
+  ctx.lineTo(464*u, 450*u);
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.lineWidth = 4*u;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+function roundRectFill(ctx, x, y, w, h, r) {
+  roundRect(ctx, x, y, w, h, r);
+  ctx.fill();
+}
+
+const canvases = ['c512','c192','c180'];
+canvases.forEach(id => drawIcon(document.getElementById(id)));
+
+function downloadAll() {
+  canvases.forEach(id => {
+    const c = document.getElementById(id);
+    const a = document.createElement('a');
+    a.download = `icon-${c.width}.png`;
+    a.href = c.toDataURL('image/png');
+    a.click();
+  });
+}
+</script>
+</body>
+</html>
