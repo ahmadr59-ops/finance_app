@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="سرمایه">
 <meta name="theme-color" content="#1456A8">
 <meta name="description" content="مدیریت درآمد، هزینه و اجاره‌داران">
@@ -39,8 +39,8 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 .scr{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(76px + var(--sb));display:none;width:100%}
 .scr.on{display:block}
 
-/* Header */
-.hdr{background:var(--grad);color:#fff;padding:calc(var(--st)+16px) 16px 0;position:sticky;top:0;z-index:50;width:100%}
+/* Header - starts below notch with white status bar area */
+.hdr{background:var(--grad);color:#fff;padding:16px 16px 0;position:sticky;top:0;z-index:50;width:100%}
 .hdr-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:14px}
 .hdr-ic{width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
 .hdr-ic svg{width:18px;height:18px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
@@ -48,14 +48,12 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 .hdr-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;padding:8px 14px;border-radius:30px;font-size:13px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-weight:600;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:5px}
 .hdr-btn svg{width:15px;height:15px;stroke:#fff;stroke-width:2;fill:none;flex-shrink:0}
 
-/* Month Nav */
-.month-nav{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border-radius:30px;padding:5px;margin-bottom:14px}
-.month-nav-btn{background:rgba(255,255,255,.22);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.month-nav-btn svg{width:15px;height:15px;stroke:#fff;stroke-width:2.2;fill:none}
-.month-nav-btn:active{background:rgba(255,255,255,.32)}
-.month-center{flex:1;text-align:center;color:#fff;font-size:14px;font-weight:600;padding:4px 0;cursor:pointer;user-select:none}
+/* Month selector pill - compact, in header corner */
+.month-pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 10px 5px 8px;cursor:pointer;position:relative}
+.month-pill-lbl{font-size:13px;font-weight:600;color:#fff}
+.month-pill svg{width:14px;height:14px;stroke:#fff;stroke-width:2.2;fill:none;flex-shrink:0}
 .month-picker-wrap{position:relative}
-.month-picker-dropdown{position:absolute;top:100%;right:0;left:0;margin-top:6px;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(11,61,128,.22);z-index:200;display:none;overflow:hidden;padding:6px}
+.month-picker-dropdown{position:absolute;top:calc(100% + 8px);right:0;min-width:260px;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(11,61,128,.22);z-index:300;display:none;overflow:hidden;padding:6px}
 .month-picker-dropdown.open{display:grid;grid-template-columns:repeat(4,1fr)}
 .mpd-item{padding:11px 4px;text-align:center;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;border:none;background:none;font-family:'Vazirmatn',sans-serif;border-radius:10px}
 .mpd-item:hover{background:var(--prl);color:var(--pr)}
@@ -198,8 +196,8 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 .smsd{color:var(--pr);font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .smsd svg{width:16px;height:16px;stroke-width:2.2;fill:none}
 
-/* Notification */
-.ntf{position:fixed;top:calc(var(--st)+10px);left:50%;transform:translateX(-50%);background:#16213A;color:#fff;padding:11px 20px;border-radius:26px;font-size:13.5px;font-weight:600;z-index:500;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+/* Notification toast */
+.ntf{position:fixed;top:calc(var(--st)+70px);left:50%;transform:translateX(-50%);background:#16213A;color:#fff;padding:11px 20px;border-radius:26px;font-size:13.5px;font-weight:600;z-index:500;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.3)}
 .ntf.on{opacity:1}
 
 /* Footer */
@@ -213,25 +211,50 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 .install-banner-txt{flex:1;font-size:12.5px;line-height:1.6}
 .install-banner-txt strong{display:block;font-size:13.5px;margin-bottom:3px}
 .install-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;padding:0;line-height:1;flex-shrink:0}
+
+/* Settings screen */
+.stt-sec{padding:14px 14px 0}
+.stt-sec-lbl{font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-right:4px}
+.stt-list{background:var(--card);border-radius:var(--rad);box-shadow:var(--sh);overflow:hidden}
+.stt-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:0.5px solid var(--border);cursor:pointer}
+.stt-row:last-child{border-bottom:none}
+.stt-ic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stt-ic svg{width:18px;height:18px;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.stt-info{flex:1}
+.stt-info strong{font-size:14px;font-weight:600;color:var(--t1);display:block}
+.stt-info span{font-size:12px;color:var(--t3);margin-top:2px;display:block}
+.stt-arrow{color:var(--t3)}
+.stt-arrow svg{width:16px;height:16px;stroke:var(--t3);stroke-width:2;fill:none}
+.stt-badge{background:var(--prl);color:var(--pr);font-size:11px;font-weight:700;padding:3px 8px;border-radius:8px}
+
+/* Category management in settings */
+.cat-chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border-radius:10px;padding:7px 10px;margin:4px;font-size:12.5px;font-weight:600;border:1.5px solid var(--border)}
+.cat-chip-del{background:none;border:none;color:var(--rd);cursor:pointer;font-size:15px;line-height:1;padding:0 0 0 4px}
+
+/* Notification badge */
+.ntf-badge{position:absolute;top:-2px;left:-2px;width:8px;height:8px;border-radius:50%;background:#E53E3E;border:1.5px solid var(--grad)}
 </style>
 </head>
 <body>
 <div class="app">
 
+<!-- SCREEN 0: Dashboard -->
 <div class="scr on" id="s0">
   <div class="hdr">
     <div class="hdr-top">
-      <div class="hdr-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-      <h1>سرمایه</h1>
-      <div class="hdr-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
-    </div>
-    <div class="month-picker-wrap">
-      <div class="month-nav">
-        <button class="month-nav-btn" onclick="changeMonth(-1)" aria-label="ماه قبل"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-        <div class="month-center" onclick="togglePicker('mp0')" id="mn0">فروردین ۱۴۰۴</div>
-        <button class="month-nav-btn" onclick="changeMonth(1)" aria-label="ماه بعد"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+      <div class="hdr-ic" style="position:relative" onclick="openNotifPanel()" aria-label="اعلان‌ها">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="ntf-badge" id="nb0" style="display:none"></span>
       </div>
-      <div class="month-picker-dropdown" id="mp0"></div>
+      <h1>سرمایه</h1>
+      <div class="month-picker-wrap">
+        <div class="month-pill" onclick="togglePicker('mp0')" aria-label="انتخاب ماه">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span class="month-pill-lbl" id="mn0">فروردین</span>
+          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="month-picker-dropdown" id="mp0"></div>
+      </div>
     </div>
   </div>
 
@@ -283,25 +306,26 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   <div class="creator-footer">ساخته شده توسط <span>Ahmad Rezazadeh</span></div>
 </div>
 
+<!-- SCREEN 1: Transactions -->
 <div class="scr" id="s1">
   <div class="hdr">
     <div class="hdr-top">
       <button class="hdr-btn" onclick="openSms()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>پیامک</button>
       <h1>تراکنش‌ها</h1>
-      <div style="width:36px;flex-shrink:0"></div>
-    </div>
-    <div class="month-picker-wrap">
-      <div class="month-nav">
-        <button class="month-nav-btn" onclick="changeMonth(-1)" aria-label="ماه قبل"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
-        <div class="month-center" onclick="togglePicker('mp1')" id="mn1">فروردین ۱۴۰۴</div>
-        <button class="month-nav-btn" onclick="changeMonth(1)" aria-label="ماه بعد"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+      <div class="month-picker-wrap">
+        <div class="month-pill" onclick="togglePicker('mp1')" aria-label="انتخاب ماه">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span class="month-pill-lbl" id="mn1">فروردین</span>
+          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="month-picker-dropdown" id="mp1"></div>
       </div>
-      <div class="month-picker-dropdown" id="mp1"></div>
     </div>
   </div>
   <div class="card" style="padding:6px 16px;margin-top:14px"><div id="txl"></div></div>
 </div>
 
+<!-- SCREEN 2: Tenants -->
 <div class="scr" id="s2">
   <div class="hdr">
     <div class="hdr-top">
@@ -309,14 +333,14 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
       <h1>اجاره‌داران</h1>
       <div style="width:36px;flex-shrink:0"></div>
     </div>
-    <div style="height:14px"></div>
   </div>
   <div id="alrt"></div>
   <div id="tl" style="padding-bottom:8px"></div>
 </div>
 
+<!-- SCREEN 3: Reports -->
 <div class="scr" id="s3">
-  <div class="hdr"><div class="hdr-top"><div style="width:36px;flex-shrink:0"></div><h1>گزارش‌ها</h1><div style="width:36px;flex-shrink:0"></div></div><div style="height:14px"></div></div>
+  <div class="hdr"><div class="hdr-top"><div style="width:36px;flex-shrink:0"></div><h1>گزارش‌ها</h1><div style="width:36px;flex-shrink:0"></div></div></div>
   <div class="card">
     <div class="card-t">مقایسه ۱۲ ماه</div>
     <div class="bc" id="bch"></div>
@@ -337,6 +361,87 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   <div class="creator-footer">سرمایه — ساخته شده توسط <span>Ahmad Rezazadeh</span></div>
 </div>
 
+<!-- SCREEN 4: Settings -->
+<div class="scr" id="s4">
+  <div class="hdr"><div class="hdr-top"><div style="width:36px;flex-shrink:0"></div><h1>تنظیمات</h1><div style="width:36px;flex-shrink:0"></div></div></div>
+
+  <div class="stt-sec">
+    <div class="stt-sec-lbl">اطلاعات برنامه</div>
+    <div class="stt-list">
+      <div class="stt-row" onclick="editAppName()">
+        <div class="stt-ic" style="background:var(--prl)"><svg viewBox="0 0 24 24" style="stroke:var(--pr)"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+        <div class="stt-info"><strong>نام برنامه</strong><span id="app-name-display">سرمایه</span></div>
+        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+      </div>
+      <div class="stt-row" onclick="openNotifSettings()">
+        <div class="stt-ic" style="background:var(--aml)"><svg viewBox="0 0 24 24" style="stroke:var(--am)"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+        <div class="stt-info"><strong>اعلان‌ها و یادآور</strong><span>تنظیم یادآور اجاره</span></div>
+        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stt-sec" style="margin-top:14px">
+    <div class="stt-sec-lbl">مدیریت دسته‌بندی‌ها</div>
+    <div class="stt-list">
+      <div class="stt-row" onclick="openCatMgr('income')">
+        <div class="stt-ic" style="background:var(--grl)"><svg viewBox="0 0 24 24" style="stroke:var(--gr)"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+        <div class="stt-info"><strong>دسته‌بندی درآمدها</strong><span id="cat-inc-count"></span></div>
+        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+      </div>
+      <div class="stt-row" onclick="openCatMgr('expense')">
+        <div class="stt-ic" style="background:var(--rdl)"><svg viewBox="0 0 24 24" style="stroke:var(--rd)"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+        <div class="stt-info"><strong>دسته‌بندی هزینه‌ها</strong><span id="cat-exp-count"></span></div>
+        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stt-sec" style="margin-top:14px">
+    <div class="stt-sec-lbl">داده‌ها</div>
+    <div class="stt-list">
+      <div class="stt-row" onclick="backup()">
+        <div class="stt-ic" style="background:var(--ppl)"><svg viewBox="0 0 24 24" style="stroke:var(--pp)"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></div>
+        <div class="stt-info"><strong>پشتیبان‌گیری</strong><span>ذخیره داده‌ها به فایل JSON</span></div>
+        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+      </div>
+      <div class="stt-row" onclick="document.getElementById('imp2').click()">
+        <div class="stt-ic" style="background:var(--grl)"><svg viewBox="0 0 24 24" style="stroke:var(--gr)"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></div>
+        <div class="stt-info"><strong>بازیابی پشتیبان</strong><span>بارگذاری فایل JSON</span></div>
+        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+      </div>
+      <input type="file" id="imp2" accept=".json" style="display:none" onchange="restore(this)">
+      <div class="stt-row" onclick="exportCSV()">
+        <div class="stt-ic" style="background:var(--aml)"><svg viewBox="0 0 24 24" style="stroke:var(--am)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></div>
+        <div class="stt-info"><strong>خروجی CSV</strong><span>صدور تراکنش‌ها برای Excel</span></div>
+        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+      </div>
+      <div class="stt-row" onclick="confirmClearData()" style="color:var(--rd)">
+        <div class="stt-ic" style="background:var(--rdl)"><svg viewBox="0 0 24 24" style="stroke:var(--rd)"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg></div>
+        <div class="stt-info"><strong style="color:var(--rd)">حذف تمام داده‌ها</strong><span>غیرقابل بازگشت</span></div>
+        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stt-sec" style="margin-top:14px">
+    <div class="stt-sec-lbl">درباره</div>
+    <div class="stt-list">
+      <div class="stt-row">
+        <div class="stt-ic" style="background:var(--prl)"><svg viewBox="0 0 24 24" style="stroke:var(--pr)"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 12v4"/></svg></div>
+        <div class="stt-info"><strong>نسخه برنامه</strong><span>سرمایه v2.0</span></div>
+        <span class="stt-badge">جدید</span>
+      </div>
+      <div class="stt-row">
+        <div class="stt-ic" style="background:var(--grl)"><svg viewBox="0 0 24 24" style="stroke:var(--gr)"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        <div class="stt-info"><strong>توسعه‌دهنده</strong><span>Ahmad Rezazadeh</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="height:20px"></div>
+</div>
+
+<!-- Bottom Nav -->
 <nav class="bnav">
   <button class="nb on" onclick="nav(0,this)">
     <span class="nb-ic"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1h-5v-7H9v7H4a1 1 0 01-1-1z"/></svg></span>داشبورد
@@ -350,12 +455,17 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   <button class="nb" onclick="nav(3,this)">
     <span class="nb-ic"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></span>گزارش
   </button>
+  <button class="nb" onclick="nav(4,this)">
+    <span class="nb-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>تنظیمات
+  </button>
 </nav>
+
 <button class="fab" id="fab" onclick="openTx()" aria-label="تراکنش جدید" style="display:none">
   <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
 </button>
 </div>
 
+<!-- MODAL: Transaction -->
 <div class="ov" id="txm">
 <div class="mdl">
   <div class="mh"></div>
@@ -378,12 +488,13 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 </div>
 </div>
 
+<!-- MODAL: SMS -->
 <div class="ov" id="smsm">
 <div class="mdl">
   <div class="mh"></div>
   <h2>پیامک بانکی</h2>
   <div class="fg"><label>متن پیامک را Paste کنید</label>
-    <textarea id="smst" placeholder="متن پیامک بانک را اینجا paste کنید..." rows="5"></textarea>
+    <textarea id="smst" placeholder="متن پیامک بانک را اینجا paste کنید..." rows="6"></textarea>
   </div>
   <button class="btn btnp" onclick="parseSms()"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>تشخیص خودکار</button>
   <div id="smsr" style="display:none;margin-top:12px"></div>
@@ -401,6 +512,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 </div>
 </div>
 
+<!-- MODAL: Tenant -->
 <div class="ov" id="tenm">
 <div class="mdl">
   <div class="mh"></div>
@@ -418,6 +530,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 </div>
 </div>
 
+<!-- MODAL: Payment history -->
 <div class="ov" id="paym">
 <div class="mdl">
   <div class="mh"></div>
@@ -427,6 +540,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 </div>
 </div>
 
+<!-- MODAL: Category add/edit -->
 <div class="ov" id="catm">
 <div class="mdl">
   <div class="mh"></div>
@@ -442,9 +556,71 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 </div>
 </div>
 
+<!-- MODAL: Category manager -->
+<div class="ov" id="catmgr">
+<div class="mdl">
+  <div class="mh"></div>
+  <h2 id="catmgr-title">مدیریت دسته‌بندی‌ها</h2>
+  <div id="catmgr-list" style="margin-bottom:12px"></div>
+  <button class="btn btnp" id="catmgr-add" onclick="">افزودن دسته‌بندی جدید</button>
+  <button class="btn btns" onclick="cls('catmgr')">بستن</button>
+</div>
+</div>
+
+<!-- MODAL: App name edit -->
+<div class="ov" id="appnm">
+<div class="mdl">
+  <div class="mh"></div>
+  <h2>ویرایش نام برنامه</h2>
+  <div class="fg"><label>نام برنامه</label><input type="text" id="appnm-inp" placeholder="سرمایه"></div>
+  <button class="btn btnp" onclick="saveAppName()">ذخیره</button>
+  <button class="btn btns" onclick="cls('appnm')">انصراف</button>
+</div>
+</div>
+
+<!-- MODAL: Notification settings -->
+<div class="ov" id="notifsm">
+<div class="mdl">
+  <div class="mh"></div>
+  <h2>تنظیمات اعلان‌ها</h2>
+  <div style="background:var(--prl);border-radius:14px;padding:14px;margin-bottom:14px;font-size:13.5px;line-height:1.8;color:var(--pr)">
+    <strong style="display:block;margin-bottom:4px">یادآور اجاره</strong>
+    هر روز ساعت ۸ صبح بررسی می‌شود. اگر سررسید اجاره رسیده و پرداخت نشده باشد، اعلان نمایش داده می‌شود.
+  </div>
+  <div id="notif-status" style="margin-bottom:14px"></div>
+  <button class="btn btnp" onclick="reqNotif()"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>فعال‌سازی اعلان‌ها</button>
+  <button class="btn btns" onclick="testNotif()">ارسال اعلان آزمایشی</button>
+  <button class="btn btns" onclick="cls('notifsm')">بستن</button>
+</div>
+</div>
+
+<!-- MODAL: Confirm delete all -->
+<div class="ov" id="clearm">
+<div class="mdl">
+  <div class="mh"></div>
+  <h2 style="color:var(--rd)">⚠️ حذف تمام داده‌ها</h2>
+  <p style="font-size:14px;line-height:1.8;color:var(--t2);margin-bottom:20px">این عملیات تمام تراکنش‌ها، اجاره‌داران و تنظیمات را حذف می‌کند و <strong>غیرقابل بازگشت</strong> است. آیا مطمئن هستید؟</p>
+  <button class="btn btnd" onclick="clearAllData()"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>بله، همه چیز را حذف کن</button>
+  <button class="btn btns" onclick="cls('clearm')">انصراف</button>
+</div>
+</div>
+
+<!-- MODAL: Notifications panel -->
+<div class="ov" id="notifpanel">
+<div class="mdl">
+  <div class="mh"></div>
+  <h2>اعلان‌ها</h2>
+  <div id="notif-panel-list"></div>
+  <button class="btn btns" style="margin-top:10px" onclick="cls('notifpanel')">بستن</button>
+</div>
+</div>
+
 <div class="ntf" id="ntf"></div>
 
 <script>
+// ============================================================
+// CONSTANTS
+// ============================================================
 const MFA=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
 const CLR=['#1865C2','#3B6D11','#D85A30','#854F0B','#993556','#534AB7','#0F6E56','#A32D2D'];
 
@@ -468,15 +644,62 @@ const ICONS={
 };
 function svgIc(name){return `<svg viewBox="0 0 24 24">${ICONS[name]||ICONS.more}</svg>`;}
 
-let ST=load(), SM=ST.sm||0;
+// ============================================================
+// INDEXEDDB STORAGE - Persistent across app restarts
+// ============================================================
+const DB_NAME='SarmayeDB', DB_VER=1, STORE='appdata';
+let db=null;
+
+function openDB(){
+  return new Promise((res,rej)=>{
+    const req=indexedDB.open(DB_NAME,DB_VER);
+    req.onupgradeneeded=e=>{
+      e.target.result.createObjectStore(STORE);
+    };
+    req.onsuccess=e=>{db=e.target.result;res(db);};
+    req.onerror=()=>rej(req.error);
+  });
+}
+function dbGet(key){
+  return new Promise((res,rej)=>{
+    const tx=db.transaction(STORE,'readonly');
+    const req=tx.objectStore(STORE).get(key);
+    req.onsuccess=()=>res(req.result);
+    req.onerror=()=>rej(req.error);
+  });
+}
+function dbSet(key,val){
+  return new Promise((res,rej)=>{
+    const tx=db.transaction(STORE,'readwrite');
+    const req=tx.objectStore(STORE).put(val,key);
+    req.onsuccess=()=>res();
+    req.onerror=()=>rej(req.error);
+  });
+}
+function dbDel(key){
+  return new Promise((res,rej)=>{
+    const tx=db.transaction(STORE,'readwrite');
+    const req=tx.objectStore(STORE).delete(key);
+    req.onsuccess=()=>res();
+    req.onerror=()=>rej(req.error);
+  });
+}
+
+// ============================================================
+// APP STATE
+// ============================================================
+let ST={}, SM=0;
 let etx=null, eten=null, txtp='income', smtp='income';
 let curScreen=0;
+let catMgrType='income';
+let pendingNotifs=[];
 
-function load(){
-  try{const s=localStorage.getItem('srmy1');return s?JSON.parse(s):def();}catch(e){return def();}
-}
 function def(){
-  return{sm:0,tx:[],ten:[],pay:{},
+  return{
+    sm:0,
+    appName:'سرمایه',
+    tx:[],ten:[],pay:{},
+    notifLog:[],
     cats:{
       income:[
         {id:'s1',n:'حقوق و دستمزد',i:'briefcase',c:'#1865C2'},
@@ -494,19 +717,50 @@ function def(){
     }
   };
 }
-function sv(){ST.sm=SM;localStorage.setItem('srmy1',JSON.stringify(ST));}
+
+async function loadState(){
+  try{
+    const saved=await dbGet('state');
+    ST=saved?{...def(),...saved,cats:{
+      income:saved.cats?.income||def().cats.income,
+      expense:saved.cats?.expense||def().cats.expense
+    }}:def();
+  }catch(e){
+    // Fallback to localStorage if IndexedDB fails
+    try{
+      const s=localStorage.getItem('srmy1');
+      ST=s?JSON.parse(s):def();
+    }catch{ST=def();}
+  }
+  SM=ST.sm||0;
+}
+
+async function sv(){
+  ST.sm=SM;
+  try{
+    await dbSet('state',ST);
+  }catch(e){
+    // Fallback
+    try{localStorage.setItem('srmy1',JSON.stringify(ST));}catch{}
+  }
+}
+
+// ============================================================
+// UTILS
+// ============================================================
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
-const FA_DIGITS=['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
-function toFaDigits(s){return String(s).replace(/[0-9]/g,d=>FA_DIGITS[d]);}
+const FA=['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+function toFa(s){return String(s).replace(/[0-9]/g,d=>FA[d]);}
 function nf(n){
   const r=Math.round(n||0);
-  const withCommas=Math.abs(r).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'٬');
-  return toFaDigits((r<0?'-':'')+withCommas);
+  const wc=Math.abs(r).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'٬');
+  return toFa((r<0?'-':'')+wc);
 }
 function toLn(s){
   return parseFloat(String(s||0)
     .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
-    .replace(/[,،٬]/g,'')) || 0;
+    .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+    .replace(/[,،٬]/g,''))||0;
 }
 function gToJ(gy,gm,gd){
   const g=[0,31,59,90,120,151,181,212,243,273,304,334];
@@ -525,9 +779,12 @@ function getCat(tp,id){return ST.cats[tp]?.find(c=>c.id===id)||{n:'سایر',i:'
 function getTx(m){return ST.tx.filter(t=>t.m===m);}
 function totals(txs){let i=0,e=0;txs.forEach(t=>{if(t.tp==='income')i+=t.a;else e+=t.a;});return{i,e,b:i-e};}
 
+// ============================================================
+// MONTH SELECTOR (pill in header corner)
+// ============================================================
 function updateMonthLabel(){
   const t=today();
-  const lbl=`${MFA[SM]} ${toFaDigits(t.y)}`;
+  const lbl=MFA[SM];
   document.querySelectorAll('[id^="mn"]').forEach(el=>el.textContent=lbl);
 }
 function changeMonth(dir){
@@ -552,6 +809,9 @@ function buildPicker(id){
 }
 function selectMonth(idx,pid){SM=idx;sv();updateMonthLabel();closePickers();if(curScreen===0)rDash();if(curScreen===1)rTx();}
 
+// ============================================================
+// NAVIGATION
+// ============================================================
 function nav(idx,btn){
   curScreen=idx;
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
@@ -561,13 +821,20 @@ function nav(idx,btn){
   else document.querySelectorAll('.nb')[idx].classList.add('on');
   closePickers();
   document.getElementById('fab').style.display=(idx===1)?'flex':'none';
-  if(idx===0)rDash();if(idx===1)rTx();if(idx===2)rTen();if(idx===3)rRep();
+  if(idx===0)rDash();
+  if(idx===1)rTx();
+  if(idx===2)rTen();
+  if(idx===3)rRep();
+  if(idx===4)rSett();
 }
 document.addEventListener('click',e=>{if(!e.target.closest('.month-picker-wrap'))closePickers();});
 
+// ============================================================
+// DASHBOARD
+// ============================================================
 function rDash(){
   const t=today();
-  document.getElementById('td').textContent=`${t.wd} ${toFaDigits(t.d)} ${MFA[t.m-1]} ${toFaDigits(t.y)}`;
+  document.getElementById('td').textContent=`${t.wd} ${toFa(t.d)} ${MFA[t.m-1]} ${toFa(t.y)}`;
   updateMonthLabel();
   const txs=getTx(SM);const{i,e,b}=totals(txs);
   document.getElementById('di').textContent=nf(i);
@@ -583,6 +850,7 @@ function rDash(){
   const isStandalone=window.navigator.standalone;
   if(isIos&&!isStandalone&&!localStorage.getItem('hideBanner'))
     document.getElementById('install-hint').style.display='flex';
+  chkNotifBadge();
 }
 function emptyHtml(ic,msg){
   return `<div class="emp"><div class="emp-ic">${svgIc(ic)}</div><p>${msg}</p></div>`;
@@ -618,23 +886,24 @@ function rDonut(txs,total){
   });
 }
 
+// ============================================================
+// TRANSACTIONS
+// ============================================================
 function txHtml(t){
   const isI=t.tp==='income';const cat=getCat(t.tp,t.cat);
   return `<div class="txi" onclick="edTx('${t.id}')">
     <div class="txic" style="background:${cat.c}1A"><span style="color:${cat.c}">${svgIc(cat.i)}</span></div>
     <div class="txin"><div class="txt">${cat.n}${t.dsc?' — '+t.dsc:''}</div>
-    <div class="txd">${toFaDigits(t.day)} ${MFA[t.m]} ${toFaDigits(t.y||1404)}</div></div>
+    <div class="txd">${toFa(t.day)} ${MFA[t.m]} ${toFa(t.y||1404)}</div></div>
     <div class="txa" style="color:${isI?'var(--gr)':'var(--rd)'}">${isI?'+':'-'}${nf(t.a)}</div>
   </div>`;
 }
-
 function rTx(){
   updateMonthLabel();
   const txs=[...getTx(SM)].reverse();
   const c=document.getElementById('txl');
   c.innerHTML=txs.length?txs.map(txHtml).join(''):emptyHtml('bag','تراکنشی در این ماه ندارید. دکمه + را بزنید');
 }
-
 function fillMon(id,sel){document.getElementById(id).innerHTML=MFA.map((m,i)=>`<option value="${i}"${i===sel?' selected':''}>${m}</option>`).join('');}
 function fillCat(id,tp){
   document.getElementById(id).innerHTML=
@@ -670,7 +939,7 @@ function styp(tp){
   document.getElementById('be').className='tb'+(tp==='expense'?' te':'');
   fillCat('tcat',tp);
 }
-function saveTx(){
+async function saveTx(){
   const a=toLn(document.getElementById('tamt').value);
   const cat=document.getElementById('tcat').value;
   const dsc=document.getElementById('tdsc').value.trim();
@@ -680,64 +949,138 @@ function saveTx(){
   if(!a||!cat){ntf('⚠️ مبلغ و دسته‌بندی الزامی است');return;}
   if(etx){const idx=ST.tx.findIndex(t=>t.id===etx);ST.tx[idx]={...ST.tx[idx],tp:txtp,cat,a,dsc,day,m,y};}
   else ST.tx.push({id:uid(),tp:txtp,cat,a,dsc,day,m,y});
-  sv();cls('txm');ntf('✅ ذخیره شد');rDash();rTx();
+  await sv();cls('txm');ntf('✅ ذخیره شد');rDash();rTx();
 }
-function delTx(){
+async function delTx(){
   if(!etx)return;ST.tx=ST.tx.filter(t=>t.id!==etx);
-  sv();cls('txm');ntf('🗑️ حذف شد');rDash();rTx();
+  await sv();cls('txm');ntf('🗑️ حذف شد');rDash();rTx();
 }
 
-function openSms(){
-  document.getElementById('smst').value='';
-  document.getElementById('smsr').style.display='none';
-  document.getElementById('smsf').style.display='none';
-  document.getElementById('smsm').classList.add('on');
-}
+// ============================================================
+// SMS PARSER - Bank-specific regex patterns
+// ============================================================
 function parseSms(){
   const raw=document.getElementById('smst').value;
   if(!raw.trim()){ntf('⚠️ متن پیامک را وارد کنید');return;}
 
+  // Normalize Persian/Arabic digits to Latin
   const txt=raw
     .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
     .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 
-  const patterns=[
-    /مبلغ\s*:?\s*([\d,،٬\s]+)\s*ریال/i,
-    /مبلغ\s*:?\s*([\d,،٬\s]+)\s*تومان/i,
-    /مبلغ\s*انتقال\s*:?\s*([\d,،٬\s]+)/i,
-    /برداشت\s*:?\s*([\d,،٬\s]+)\s*ریال/i,
-    /واریز\s*:?\s*([\d,،٬\s]+)\s*ریال/i,
-    /([\d,،٬]+)\s*ریال/i,
-    /([\d,،٬]+)\s*تومان/i,
-    /مبلغ\s*:?\s*([\d,،٬\s]+)/i,
-    /([\d,،٬]{4,})/
-  ];
-  let amount=0, inRial=false;
-  for(const pat of patterns){
-    const m=txt.match(pat);
-    if(m){
-      amount=parseFloat(m[1].replace(/[,،٬\s]/g,''))||0;
-      if(pat.source.includes('ریال')||/ریال/i.test(raw)) inRial=true;
-      if(amount>0) break;
+  let amount=0, inRial=false, bankName='', txType='';
+
+  // ---- BANK MELLI (بانک ملی) ----
+  // Format: كارت: 7489 / خريد: 16,950,000 / خريدمانده: 112,045,677
+  const melliPurchase=/(?:خريد|خرید)\s*:\s*([\d,،٬]+)(?!\s*مانده)/i.exec(txt);
+  const melliBalance=/(?:خريدمانده|خريد\s*مانده|مانده)\s*:\s*([\d,،٬]+)/i.exec(txt);
+  if(melliPurchase && melliBalance){
+    // Make sure we pick the PURCHASE amount, not the balance
+    const purchaseAmt=parseFloat(melliPurchase[1].replace(/[,،٬]/g,''))||0;
+    const balanceAmt=parseFloat(melliBalance[1].replace(/[,،٬]/g,''))||0;
+    // Sanity check: purchase should be smaller than balance in most cases
+    if(purchaseAmt>0){
+      amount=purchaseAmt;
+      inRial=false; // Bank Melli uses Rials implicitly but amounts are shown as Toman
+      bankName='بانک ملی';
+      txType='expense';
     }
   }
-  if(inRial&&amount>0) amount=Math.round(amount/10);
 
-  const isI=/واریز|دریافت|credit|deposit|افزایش|بستانکار|شارژ\s*حساب/i.test(raw);
-  const isE=/برداشت|پرداخت|debit|خرید|کسر|بدهکار|انتقال\s*وجه|خرید\s*از/i.test(raw);
-  const dt=isI&&!isE?'income':isE?'expense':(isI?'income':'');
+  // ---- BANK TEJARAT (بانک تجارت) ----
+  // Format: مبلغ: 3,400,000 ريال
+  if(!amount){
+    const tejaratAmt=/مبلغ\s*:\s*([\d,،٬]+)\s*ريال/i.exec(txt);
+    if(tejaratAmt){
+      amount=parseFloat(tejaratAmt[1].replace(/[,،٬]/g,''))||0;
+      inRial=true;
+      bankName='بانک تجارت';
+      // Detect type from نوع تراکنش
+      const txTypeLine=/نوع\s*تراکنش\s*:\s*(.+)/i.exec(raw);
+      if(txTypeLine){
+        const tt=txTypeLine[1].trim();
+        if(/واريز|واریز|credit|deposit|دريافت|دریافت/i.test(tt)) txType='income';
+        else txType='expense';
+      } else {
+        txType='expense';
+      }
+    }
+  }
+
+  // ---- BANK SHAHR (بانک شهر) ----
+  // Format: مبلغ:4,000,000ريال / موجودي:5,000,000ريال
+  if(!amount){
+    const shahrAmt=/مبلغ\s*:\s*([\d,،٬]+)\s*ريال/i.exec(txt);
+    const shahrBalance=/(?:موجودي|موجودی)\s*:\s*([\d,،٬]+)/i.exec(txt);
+    if(shahrAmt){
+      amount=parseFloat(shahrAmt[1].replace(/[,،٬]/g,''))||0;
+      inRial=true;
+      bankName='بانک شهر';
+      if(/واريز|واریز/i.test(raw)) txType='income';
+      else if(/انتقال\s*وجه/i.test(raw)) txType='expense';
+      else txType='expense';
+    }
+  }
+
+  // ---- GENERIC PATTERNS (fallback for other banks) ----
+  if(!amount){
+    const patterns=[
+      // مبلغ: xxx ریال
+      {re:/مبلغ\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true},
+      {re:/مبلغ\s*:?\s*([\d,،٬\s]+)\s*تومان/i, rial:false},
+      // برداشت/واریز + ریال
+      {re:/برداشت\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true, force:'expense'},
+      {re:/واريز\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true, force:'income'},
+      {re:/واريز\s*:?\s*([\d,،٬\s]+)\s*تومان/i, rial:false, force:'income'},
+      // مبلغ انتقال
+      {re:/مبلغ\s*انتقال\s*:?\s*([\d,،٬\s]+)/i, rial:true},
+      // Generic: number followed by ریال (avoid card/account numbers by requiring comma or 7+ digits)
+      {re:/([\d]{1,3}(?:[,،٬]\d{3})+)\s*ريال/i, rial:true},
+      {re:/([\d]{1,3}(?:[,،٬]\d{3})+)\s*تومان/i, rial:false},
+    ];
+    for(const {re,rial,force} of patterns){
+      const m=txt.match(re);
+      if(m){
+        const v=parseFloat(m[1].replace(/[,،٬\s]/g,''))||0;
+        // Reject amounts that look like card/account/transaction numbers
+        // Transaction numbers are typically >12 digits; amounts < 10 billion Toman
+        if(v>0 && v<100000000000){
+          amount=v;
+          inRial=rial;
+          if(force) txType=force;
+          break;
+        }
+      }
+    }
+  }
+
+  // Convert Rial to Toman
+  if(inRial && amount>0) amount=Math.round(amount/10);
+
+  // Determine transaction direction if not already set
+  if(!txType){
+    const isIncome=/واریز|واريز|دریافت|دريافت|credit|deposit|افزایش|بستانکار|شارژ\s*حساب/i.test(raw);
+    const isExpense=/برداشت|پرداخت|debit|خرید|خريد|کسر|بدهکار|انتقال\s*وجه/i.test(raw);
+    txType=isIncome&&!isExpense?'income':isExpense?'expense':'expense';
+  }
+
+  // Build description
+  let desc='';
+  if(bankName) desc=bankName;
 
   const res=document.getElementById('smsr');
   res.style.display='block';
   if(amount>0){
-    res.innerHTML=`<div class="smsbox"><div class="smsd"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>تشخیص داده شد</div>
+    res.innerHTML=`<div class="smsbox"><div class="smsd"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>تشخیص داده شد${bankName?' — '+bankName:''}</div>
       مبلغ: <strong>${nf(amount)} تومان</strong><br>
-      نوع: <strong>${dt==='income'?'واریز (درآمد)':dt==='expense'?'برداشت (هزینه)':'نامشخص — لطفاً انتخاب کنید'}</strong></div>`;
+      نوع: <strong>${txType==='income'?'واریز (درآمد)':'برداشت (هزینه)'}</strong></div>`;
     document.getElementById('smsf').style.display='block';
-    sst(dt||'income');document.getElementById('samt').value=amount;
+    sst(txType);
+    document.getElementById('samt').value=amount;
+    document.getElementById('sdsc').value=desc;
   } else {
     res.innerHTML='<div class="smsbox" style="background:var(--rdl);color:var(--rd)">مبلغی تشخیص داده نشد. لطفاً مبلغ را دستی وارد کنید.</div>';
-    document.getElementById('smsf').style.display='block';sst('income');
+    document.getElementById('smsf').style.display='block';sst('expense');
   }
 }
 function sst(tp){
@@ -746,16 +1089,19 @@ function sst(tp){
   document.getElementById('sbe').className='tb'+(tp==='expense'?' te':'');
   fillCat('scat',tp);
 }
-function saveSms(){
+async function saveSms(){
   const a=toLn(document.getElementById('samt').value);
   const cat=document.getElementById('scat').value;
   const dsc=document.getElementById('sdsc').value.trim();
   if(!a||!cat){ntf('⚠️ مبلغ و دسته‌بندی الزامی است');return;}
   const t=today();
   ST.tx.push({id:uid(),tp:smtp,cat,a,dsc:dsc||'پیامک بانکی',day:t.d,m:t.m-1,y:t.y});
-  sv();cls('smsm');ntf('✅ تراکنش ثبت شد');rDash();rTx();
+  await sv();cls('smsm');ntf('✅ تراکنش ثبت شد');rDash();rTx();
 }
 
+// ============================================================
+// CATEGORIES
+// ============================================================
 const ICON_LABELS={briefcase:'شغل',home:'خانه',building:'ساختمان','trend-up':'سرمایه',coin:'سکه',cart:'خرید',heart:'سلامت',piggy:'پس‌انداز',shirt:'پوشاک',car:'خودرو',health:'پزشکی',book:'آموزش',gift:'هدیه',more:'سایر',zap:'انرژی',bag:'کیف'};
 function openCat(tp){
   document.getElementById('cnm').value='';
@@ -770,22 +1116,27 @@ function openCat(tp){
 function pickCatIcon(key){
   document.getElementById('cion').value=key;
   Object.keys(ICONS).forEach(k=>{
-    const el=document.getElementById('cicon-'+k);
-    if(!el)return;
+    const el=document.getElementById('cicon-'+k);if(!el)return;
     const active=k===key;
     el.style.borderColor=active?'var(--pr)':'var(--border)';
     el.style.background=active?'var(--prl)':'#fff';
     el.style.color=active?'var(--pr)':'var(--t2)';
   });
 }
-function saveCat(){
+async function saveCat(){
   const n=document.getElementById('cnm').value.trim();
   const i=document.getElementById('cion').value||'more';
   const tp=document.getElementById('ctyp').value;
   if(!n){ntf('⚠️ نام الزامی است');return;}
-  ST.cats[tp].push({id:'c'+uid(),n,i,c:CLR[ST.cats[tp].length%CLR.length]});sv();cls('catm');ntf('✅ اضافه شد');fillCat('tcat',txtp);
+  ST.cats[tp].push({id:'c'+uid(),n,i,c:CLR[ST.cats[tp].length%CLR.length]});
+  await sv();cls('catm');ntf('✅ اضافه شد');fillCat('tcat',txtp);
+  // Refresh manager if open
+  if(document.getElementById('catmgr').classList.contains('on')) openCatMgr(tp);
 }
 
+// ============================================================
+// TENANTS
+// ============================================================
 function rTen(){
   const t=today();const list=document.getElementById('tl');const alrt=document.getElementById('alrt');
   if(!ST.ten.length){
@@ -800,7 +1151,7 @@ function rTen(){
     return `<div class="tcrd">
       <div class="thdr" onclick="tog('tb${ten.id}')">
         <div class="tav">${svgIc(ten.tp==='تجاری'?'building':'home')}</div>
-        <div class="tin"><div class="tn">${ten.n}</div><div class="tu">${ten.unit} · ${ten.tp} · سررسید ${toFaDigits(ten.due)}ام</div></div>
+        <div class="tin"><div class="tn">${ten.n}</div><div class="tu">${ten.unit} · ${ten.tp} · سررسید ${toFa(ten.due)}ام</div></div>
         <div>${sb}</div>
       </div>
       <div class="tbody" id="tb${ten.id}">
@@ -836,7 +1187,7 @@ function openTM(id){
   }
   document.getElementById('tenm').classList.add('on');
 }
-function saveTen(){
+async function saveTen(){
   const n=document.getElementById('tnm').value.trim();
   const unit=document.getElementById('tunit').value.trim();
   const tp=document.getElementById('ttyp').value;
@@ -847,12 +1198,12 @@ function saveTen(){
   if(!n||!unit||!rent){ntf('⚠️ اطلاعات ضروری را وارد کنید');return;}
   if(eten){const idx=ST.ten.findIndex(t=>t.id===eten);ST.ten[idx]={...ST.ten[idx],n,unit,tp,rent,dep,due,note};}
   else ST.ten.push({id:uid(),n,unit,tp,rent,dep,due,note});
-  sv();cls('tenm');ntf('✅ ذخیره شد');rTen();
+  await sv();cls('tenm');ntf('✅ ذخیره شد');rTen();
 }
-function delTen(){
+async function delTen(){
   if(!eten)return;ST.ten=ST.ten.filter(t=>t.id!==eten);
   Object.keys(ST.pay).filter(k=>k.startsWith(eten)).forEach(k=>delete ST.pay[k]);
-  sv();cls('tenm');ntf('🗑️ حذف شد');rTen();
+  await sv();cls('tenm');ntf('🗑️ حذف شد');rTen();
 }
 function openPay(tid){
   const t=ST.ten.find(x=>x.id===tid);if(!t)return;
@@ -860,7 +1211,7 @@ function openPay(tid){
   const td=today();let h='';
   MFA.forEach((m,i)=>{
     const key=`${tid}_${td.y}_${i+1}`;const paid=ST.pay[key];
-    h+=`<div class="pr"><div><div style="font-size:14px;font-weight:600">${m} ${toFaDigits(td.y)}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${nf(t.rent)} تومان</div></div>
+    h+=`<div class="pr"><div><div style="font-size:14px;font-weight:600">${m} ${toFa(td.y)}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${nf(t.rent)} تومان</div></div>
       <div>${paid
         ?`<span class="bdg bg"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>پرداخت</span><button onclick="tPay('${key}',false,'${tid}')" style="background:none;border:none;font-size:14px;cursor:pointer;color:var(--t3);margin-right:6px">↩</button>`
         :`<button onclick="tPay('${key}',true,'${tid}')" style="padding:7px 14px;border-radius:10px;border:1.5px solid var(--gr);background:var(--grl);color:var(--gr);font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif">ثبت پرداخت</button>`
@@ -869,11 +1220,14 @@ function openPay(tid){
   document.getElementById('payc').innerHTML=h;
   document.getElementById('paym').classList.add('on');
 }
-function tPay(key,paid,tid){
+async function tPay(key,paid,tid){
   if(paid)ST.pay[key]=true;else delete ST.pay[key];
-  sv();openPay(tid);rTen();
+  await sv();openPay(tid);rTen();
 }
 
+// ============================================================
+// REPORTS
+// ============================================================
 function rRep(){
   const maxV=Math.max(...MFA.map((_,i)=>{const{i:inc,e:exp}=totals(getTx(i));return Math.max(inc,exp,1);}));
   document.getElementById('bch').innerHTML=MFA.map((_,i)=>{
@@ -890,6 +1244,174 @@ function rRep(){
     <div class="rrow"><span class="rlb">مانده کل</span><span class="rv" style="color:${ab>=0?'var(--gr)':'var(--rd)'}">${ab>=0?'+':''}${nf(ab)} ت</span></div>`;
 }
 
+// ============================================================
+// SETTINGS
+// ============================================================
+function rSett(){
+  const n=ST.appName||'سرمایه';
+  document.getElementById('app-name-display').textContent=n;
+  document.getElementById('cat-inc-count').textContent=`${ST.cats.income.length} دسته`;
+  document.getElementById('cat-exp-count').textContent=`${ST.cats.expense.length} دسته`;
+  updateNotifStatus();
+}
+function editAppName(){
+  document.getElementById('appnm-inp').value=ST.appName||'سرمایه';
+  document.getElementById('appnm').classList.add('on');
+}
+async function saveAppName(){
+  const n=document.getElementById('appnm-inp').value.trim();
+  if(!n){ntf('⚠️ نام الزامی است');return;}
+  ST.appName=n;
+  document.title=n;
+  document.getElementById('app-name-display').textContent=n;
+  // Update all h1 elements that show app name
+  document.querySelectorAll('.hdr h1').forEach(el=>{if(el.textContent==='سرمایه'||el.textContent===n){}});
+  await sv();cls('appnm');ntf('✅ نام برنامه ذخیره شد');
+}
+
+// Category manager in settings
+function openCatMgr(tp){
+  catMgrType=tp;
+  document.getElementById('catmgr-title').textContent=tp==='income'?'دسته‌بندی‌های درآمد':'دسته‌بندی‌های هزینه';
+  document.getElementById('catmgr-add').onclick=()=>openCat(tp);
+  const list=document.getElementById('catmgr-list');
+  list.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+    ${ST.cats[tp].map(c=>`<div class="cat-chip">
+      <span style="color:${c.c};margin-left:2px">${svgIc(c.i).replace('svg viewBox','svg style="width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none" viewBox')}</span>
+      ${c.n}
+      <button class="cat-chip-del" onclick="delCat('${tp}','${c.id}')">×</button>
+    </div>`).join('')}
+  </div>`;
+  document.getElementById('catmgr').classList.add('on');
+}
+async function delCat(tp,id){
+  if(ST.cats[tp].length<=1){ntf('⚠️ حداقل یک دسته لازم است');return;}
+  ST.cats[tp]=ST.cats[tp].filter(c=>c.id!==id);
+  await sv();ntf('🗑️ حذف شد');openCatMgr(tp);
+}
+
+function confirmClearData(){
+  document.getElementById('clearm').classList.add('on');
+}
+async function clearAllData(){
+  ST=def();
+  await sv();
+  cls('clearm');
+  ntf('🗑️ تمام داده‌ها حذف شد');
+  rDash();
+}
+
+// ============================================================
+// NOTIFICATIONS (Bell) - Fully functional
+// ============================================================
+function updateNotifStatus(){
+  const el=document.getElementById('notif-status');
+  if(!el) return;
+  if(!('Notification' in window)){
+    el.innerHTML='<div style="background:var(--rdl);border-radius:12px;padding:12px;font-size:13px;color:var(--rd)">مرورگر شما از اعلان‌ها پشتیبانی نمی‌کند.</div>';
+    return;
+  }
+  const p=Notification.permission;
+  const map={granted:{bg:'var(--grl)',c:'var(--gr)',t:'✅ اعلان‌ها فعال هستند'},
+             denied:{bg:'var(--rdl)',c:'var(--rd)',t:'❌ اعلان‌ها مسدود شده‌اند. از تنظیمات مرورگر مجوز بدهید'},
+             default:{bg:'var(--aml)',c:'var(--am)',t:'⏳ مجوز اعلان دریافت نشده'}};
+  const info=map[p]||map.default;
+  el.innerHTML=`<div style="background:${info.bg};border-radius:12px;padding:12px;font-size:13px;color:${info.c}">${info.t}</div>`;
+}
+function openNotifSettings(){
+  updateNotifStatus();
+  document.getElementById('notifsm').classList.add('on');
+}
+async function reqNotif(){
+  if(!('Notification' in window)){ntf('⚠️ مرورگر پشتیبانی نمی‌کند');return;}
+  const p=await Notification.requestPermission();
+  updateNotifStatus();
+  if(p==='granted') ntf('✅ اعلان‌ها فعال شد');
+  else ntf('⚠️ مجوز داده نشد');
+}
+function testNotif(){
+  if(Notification.permission!=='granted'){
+    ntf('⚠️ اول اعلان‌ها را فعال کنید');return;
+  }
+  new Notification('سرمایه — آزمایشی',{
+    body:'این یک اعلان آزمایشی است. سیستم یادآور اجاره فعال است ✅',
+    icon:'icon-192.png'
+  });
+  ntf('🔔 اعلان ارسال شد');
+}
+// Check due rents and send notifications
+function chkDue(){
+  const t=today();
+  const pending=[];
+  ST.ten.forEach(ten=>{
+    if(t.d>=ten.due){
+      const key=`${ten.id}_${t.y}_${t.m}`;
+      if(!ST.pay[key]){
+        pending.push(ten);
+        if(Notification.permission==='granted'){
+          new Notification('سرمایه — یادآور اجاره',{
+            body:`${ten.n} — اجاره ${MFA[t.m-1]} ${toFa(t.y)} پرداخت نشده (سررسید: ${toFa(ten.due)}ام ماه)`,
+            icon:'icon-192.png'
+          });
+        }
+      }
+    }
+  });
+  // Store in notif log for in-app bell
+  if(pending.length){
+    if(!ST.notifLog) ST.notifLog=[];
+    const today_str=`${t.y}/${t.m}/${t.d}`;
+    pending.forEach(ten=>{
+      const exists=ST.notifLog.find(n=>n.tenId===ten.id&&n.date===today_str);
+      if(!exists){
+        ST.notifLog.unshift({
+          id:uid(),tenId:ten.id,tenName:ten.n,
+          date:today_str,month:MFA[t.m-1],year:t.y,read:false
+        });
+      }
+    });
+    // Keep only last 30 notifications
+    ST.notifLog=ST.notifLog.slice(0,30);
+    sv();
+  }
+  chkNotifBadge();
+}
+function chkNotifBadge(){
+  const unread=(ST.notifLog||[]).filter(n=>!n.read).length;
+  const badge=document.getElementById('nb0');
+  if(badge) badge.style.display=unread>0?'block':'none';
+}
+function openNotifPanel(){
+  const list=document.getElementById('notif-panel-list');
+  const logs=ST.notifLog||[];
+  if(!logs.length){
+    list.innerHTML=emptyHtml('more','اعلانی ندارید');
+  } else {
+    list.innerHTML=logs.map(n=>`
+      <div class="txi" style="${n.read?'opacity:.6':''}">
+        <div class="txic" style="background:var(--aml)"><svg viewBox="0 0 24 24" style="stroke:var(--am);width:21px;height:21px;stroke-width:1.8;fill:none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+        <div class="txin">
+          <div class="txt">یادآور اجاره: ${n.tenName}</div>
+          <div class="txd">${n.month} ${toFa(n.year)} — تاریخ: ${n.date}</div>
+        </div>
+        ${!n.read?`<button onclick="markNotifRead('${n.id}')" style="background:var(--prl);border:none;border-radius:8px;padding:5px 8px;font-size:11px;color:var(--pr);cursor:pointer;font-family:'Vazirmatn',sans-serif">خواندم</button>`:''}
+      </div>`).join('');
+  }
+  // Mark all as read
+  (ST.notifLog||[]).forEach(n=>n.read=true);
+  sv();
+  chkNotifBadge();
+  document.getElementById('notifpanel').classList.add('on');
+}
+async function markNotifRead(id){
+  const n=(ST.notifLog||[]).find(x=>x.id===id);
+  if(n){n.read=true;await sv();}
+  openNotifPanel();
+}
+
+// ============================================================
+// EXPORT / BACKUP / RESTORE
+// ============================================================
 function exportCSV(){
   let csv='\uFEFFنوع,دسته‌بندی,مبلغ,توضیحات,روز,ماه,سال\n';
   ST.tx.forEach(t=>{const cat=getCat(t.tp,t.cat);csv+=`"${t.tp==='income'?'درآمد':'هزینه'}","${cat.n}",${t.a},"${t.dsc||''}",${t.day},"${MFA[t.m]}",${t.y||1404}\n`;});
@@ -900,36 +1422,51 @@ function backup(){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(ST,null,2)],{type:'application/json'}));
   a.download=`sarmaye_bk_${Date.now()}.json`;a.click();URL.revokeObjectURL(a.href);ntf('💾 پشتیبان‌گیری انجام شد');
 }
-function restore(inp){
+async function restore(inp){
   const f=inp.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=e=>{try{const p=JSON.parse(e.target.result);if(p.tx&&p.cats){ST=p;sv();ntf('✅ بازیابی شد');rDash();}else ntf('⚠️ فایل نامعتبر');}catch{ntf('⚠️ خطا');}};
+  r.onload=async e=>{
+    try{
+      const p=JSON.parse(e.target.result);
+      if(p.tx&&p.cats){ST=p;await sv();ntf('✅ بازیابی شد');rDash();}
+      else ntf('⚠️ فایل نامعتبر');
+    }catch{ntf('⚠️ خطا');}
+  };
   r.readAsText(f);
 }
 
+// ============================================================
+// UI HELPERS
+// ============================================================
 function cls(id){document.getElementById(id).classList.remove('on');}
-function ntf(msg){const n=document.getElementById('ntf');n.textContent=msg;n.classList.add('on');setTimeout(()=>n.classList.remove('on'),2500);}
-
+function ntf(msg){
+  const n=document.getElementById('ntf');
+  n.textContent=msg;n.classList.add('on');
+  setTimeout(()=>n.classList.remove('on'),2500);
+}
 document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');}));
 
+// ============================================================
+// SERVICE WORKER
+// ============================================================
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('/finance_app/sw.js').catch(()=>{}));
 }
 
-if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
-function chkDue(){
-  const t=today();
-  ST.ten.forEach(ten=>{
-    if(t.d>=ten.due){
-      const key=`${ten.id}_${t.y}_${t.m}`;
-      if(!ST.pay[key]&&Notification.permission==='granted')
-        new Notification('سرمایه',{body:`${ten.n} — اجاره ${MFA[t.m-1]} پرداخت نشده`});
-    }
-  });
+// ============================================================
+// INIT
+// ============================================================
+async function init(){
+  await openDB();
+  await loadState();
+  rDash();
+  // Schedule daily notification check
+  setTimeout(chkDue, 2000);
+  // Also check every hour while app is open
+  setInterval(chkDue, 3600000);
 }
 
-rDash();
-setTimeout(chkDue,2000);
+init();
 </script>
 </body>
 </html>
