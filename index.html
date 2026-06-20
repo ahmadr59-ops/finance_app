@@ -53,7 +53,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 .month-pill-lbl{font-size:13px;font-weight:600;color:#fff}
 .month-pill svg{width:14px;height:14px;stroke:#fff;stroke-width:2.2;fill:none;flex-shrink:0}
 .month-picker-wrap{position:relative}
-.month-picker-dropdown{position:absolute;top:calc(100% + 8px);right:0;min-width:260px;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(11,61,128,.22);z-index:300;display:none;overflow:hidden;padding:6px}
+.month-picker-dropdown{position:fixed;top:auto;right:8px;left:8px;width:auto;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(11,61,128,.22);z-index:300;display:none;overflow:hidden;padding:6px}
 .month-picker-dropdown.open{display:grid;grid-template-columns:repeat(4,1fr)}
 .mpd-item{padding:11px 4px;text-align:center;font-size:13px;font-weight:500;color:var(--t2);cursor:pointer;border:none;background:none;font-family:'Vazirmatn',sans-serif;border-radius:10px}
 .mpd-item:hover{background:var(--prl);color:var(--pr)}
@@ -258,52 +258,53 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     </div>
   </div>
 
-  <div class="today-card">
-    <div class="today-ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
-    <div>
-      <div class="today-txt-main" id="td"></div>
-      <div class="today-txt-sub">امروز</div>
+  <!-- Dashboard: compact no-scroll layout -->
+  <div style="padding:10px 14px 0;display:flex;align-items:center;gap:8px">
+    <div style="flex:1;background:var(--card);border-radius:var(--rads);box-shadow:var(--sh);padding:10px 14px">
+      <div style="font-size:11px;color:var(--t3);font-weight:600">امروز</div>
+      <div style="font-size:13px;font-weight:700;margin-top:2px" id="td"></div>
     </div>
   </div>
 
-  <div id="install-hint" style="display:none" class="install-banner">
-    <div class="install-banner-ic"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div>
-    <div class="install-banner-txt"><strong>نصب سرمایه روی آیفون</strong>دکمه Share سپس Add to Home Screen</div>
-    <button class="install-close" onclick="document.getElementById('install-hint').style.display='none'" aria-label="بستن">×</button>
-  </div>
-
-  <div class="sgrid">
+  <div class="sgrid" style="padding:10px 14px 0">
     <div class="sc inc"><div class="lb">درآمد</div><div class="vl" id="di">۰</div><div class="ut">تومان</div></div>
     <div class="sc exp"><div class="lb">هزینه</div><div class="vl" id="de">۰</div><div class="ut">تومان</div></div>
   </div>
-  <div class="bal-card"><span class="lb">مانده ماه</span><span class="vl" id="db">۰ تومان</span></div>
+  <div class="bal-card" style="margin:8px 14px 0"><span class="lb">مانده ماه</span><span class="vl" id="db">۰ تومان</span></div>
 
-  <div class="qa-title">دسترسی سریع</div>
-  <div class="qagrid">
-    <button class="qa-item" onclick="nav(1,document.querySelectorAll('.nb')[1]);openTx()">
-      <div class="qa-ic" style="background:var(--grl)"><svg viewBox="0 0 24 24" style="stroke:var(--gr)"><path d="M12 5v14M5 12h14"/></svg></div>
-      <div class="qa-lb">تراکنش جدید</div>
+  <!-- Quick access: horizontal row -->
+  <div style="display:flex;gap:8px;padding:10px 14px 0">
+    <button class="qa-item" style="flex:1;padding:10px 4px" onclick="openTx()">
+      <div class="qa-ic" style="background:var(--grl);width:38px;height:38px;border-radius:12px"><svg viewBox="0 0 24 24" style="stroke:var(--gr)"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div class="qa-lb" style="font-size:11px">تراکنش</div>
     </button>
-    <button class="qa-item" onclick="nav(1,document.querySelectorAll('.nb')[1]);openSms()">
-      <div class="qa-ic" style="background:var(--prl)"><svg viewBox="0 0 24 24" style="stroke:var(--pr)"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-      <div class="qa-lb">پیامک بانک</div>
+    <button class="qa-item" style="flex:1;padding:10px 4px" onclick="openSms()">
+      <div class="qa-ic" style="background:var(--prl);width:38px;height:38px;border-radius:12px"><svg viewBox="0 0 24 24" style="stroke:var(--pr)"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+      <div class="qa-lb" style="font-size:11px">پیامک</div>
     </button>
-    <button class="qa-item" onclick="nav(2,document.querySelectorAll('.nb')[2])">
-      <div class="qa-ic" style="background:var(--aml)"><svg viewBox="0 0 24 24" style="stroke:var(--am)"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg></div>
-      <div class="qa-lb">اجاره‌داران</div>
+    <button class="qa-item" style="flex:1;padding:10px 4px" onclick="nav(2,document.querySelectorAll('.nb')[2])">
+      <div class="qa-ic" style="background:var(--aml);width:38px;height:38px;border-radius:12px"><svg viewBox="0 0 24 24" style="stroke:var(--am)"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg></div>
+      <div class="qa-lb" style="font-size:11px">اجاره</div>
+    </button>
+    <button class="qa-item" style="flex:1;padding:10px 4px" onclick="nav(3,document.querySelectorAll('.nb')[3])">
+      <div class="qa-ic" style="background:var(--ppl);width:38px;height:38px;border-radius:12px"><svg viewBox="0 0 24 24" style="stroke:var(--pp)"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
+      <div class="qa-lb" style="font-size:11px">گزارش</div>
     </button>
   </div>
 
-  <div class="card">
-    <div class="card-t">توزیع هزینه‌ها</div>
-    <div class="dw">
-      <svg id="dsv" width="118" height="118" viewBox="0 0 110 110"></svg>
-      <div class="dleg" id="dleg"></div>
+  <!-- Donut + Recent combined card -->
+  <div class="card" style="margin:10px 14px 0;padding:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <span style="font-size:13px;font-weight:700">توزیع هزینه‌ها</span>
+    </div>
+    <div class="dw" style="gap:10px">
+      <svg id="dsv" width="90" height="90" viewBox="0 0 110 110" style="flex-shrink:0"></svg>
+      <div class="dleg" id="dleg" style="flex:1;min-width:0"></div>
     </div>
   </div>
-  <div class="qa-title">آخرین تراکنش‌ها</div>
-  <div class="card" style="padding:6px 16px"><div id="rtx"></div></div>
-  <div class="creator-footer">ساخته شده توسط <span>Ahmad Rezazadeh</span></div>
+
+  <div style="padding:10px 14px 4px;font-size:13px;font-weight:700;color:var(--t2)">آخرین تراکنش‌ها</div>
+  <div class="card" style="margin:0 14px;padding:4px 14px"><div id="rtx"></div></div>
 </div>
 
 <!-- SCREEN 1: Transactions -->
@@ -330,7 +331,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   <div class="hdr">
     <div class="hdr-top">
       <button class="hdr-btn" onclick="openTM()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>واحد جدید</button>
-      <h1>اجاره‌داران</h1>
+      <div style="flex:1"></div>
       <div style="width:36px;flex-shrink:0"></div>
     </div>
   </div>
@@ -798,7 +799,14 @@ function togglePicker(id){
   const el=document.getElementById(id);
   const wasOpen=el.classList.contains('open');
   closePickers();
-  if(!wasOpen){buildPicker(id);el.classList.add('open');}
+  if(!wasOpen){
+    buildPicker(id);
+    // Position below the pill button
+    const pill=el.previousElementSibling;
+    const rect=pill.getBoundingClientRect();
+    el.style.top=(rect.bottom+6)+'px';
+    el.classList.add('open');
+  }
 }
 function closePickers(){document.querySelectorAll('.month-picker-dropdown').forEach(e=>e.classList.remove('open'));}
 function buildPicker(id){
@@ -844,7 +852,7 @@ function rDash(){
   db.style.color=b>=0?'var(--gr)':'var(--rd)';
   rDonut(txs,e);
   const rc=document.getElementById('rtx');
-  const last=[...txs].reverse().slice(0,5);
+  const last=[...txs].reverse().slice(0,3);
   rc.innerHTML=last.length?last.map(txHtml).join(''):emptyHtml('bag','تراکنشی ثبت نشده');
   const isIos=/iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone=window.navigator.standalone;
@@ -879,10 +887,9 @@ function rDonut(txs,total){
     p.setAttribute('fill',cl);p.setAttribute('stroke','white');p.setAttribute('stroke-width','1.5');
     svg.appendChild(p);ang+=a;
     const cat=getCat('expense',cid),pc=(pct*100).toFixed(1);
-    leg.innerHTML+=`<div class="li"><span class="ld" style="background:${cl}"></span>
-      <div style="flex:1"><div style="display:flex;justify-content:space-between"><span class="ll">${cat.n}</span><span class="lp">${pc}٪</span></div>
-      <div class="lbb"><div class="lbf" style="width:${pc}%;background:${cl}"></div></div>
-      <div class="lv">${nf(val)} ت</div></div></div>`;
+    leg.innerHTML+=`<div class="li" style="margin-bottom:6px"><span class="ld" style="background:${cl}"></span>
+      <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between"><span class="ll" style="font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px">${cat.n}</span><span class="lp" style="font-size:11.5px">${pc}٪</span></div>
+      <div class="lbb"><div class="lbf" style="width:${pc}%;background:${cl}"></div></div></div></div>`;
   });
 }
 
@@ -944,11 +951,13 @@ async function saveTx(){
   const cat=document.getElementById('tcat').value;
   const dsc=document.getElementById('tdsc').value.trim();
   const day=parseInt(document.getElementById('tday').value)||1;
-  const m=parseInt(document.getElementById('tmon').value);
+  const m=parseInt(document.getElementById('tmon').value); // 0-based index
   const y=parseInt(document.getElementById('tyr').value)||1404;
-  if(!a||!cat){ntf('⚠️ مبلغ و دسته‌بندی الزامی است');return;}
-  if(etx){const idx=ST.tx.findIndex(t=>t.id===etx);ST.tx[idx]={...ST.tx[idx],tp:txtp,cat,a,dsc,day,m,y};}
-  else ST.tx.push({id:uid(),tp:txtp,cat,a,dsc,day,m,y});
+  if(!a){ntf('⚠️ مبلغ الزامی است');return;}
+  if(!cat||cat===''){ntf('⚠️ دسته‌بندی را انتخاب کنید');return;}
+  const rec={id:etx||uid(),tp:txtp,cat,a,dsc,day,m,y};
+  if(etx){const idx=ST.tx.findIndex(t=>t.id===etx);if(idx>=0)ST.tx[idx]=rec;else ST.tx.push(rec);}
+  else ST.tx.push(rec);
   await sv();cls('txm');ntf('✅ ذخیره شد');rDash();rTx();
 }
 async function delTx(){
@@ -1082,6 +1091,12 @@ function parseSms(){
     res.innerHTML='<div class="smsbox" style="background:var(--rdl);color:var(--rd)">مبلغی تشخیص داده نشد. لطفاً مبلغ را دستی وارد کنید.</div>';
     document.getElementById('smsf').style.display='block';sst('expense');
   }
+}
+function openSms(){
+  document.getElementById('smst').value='';
+  document.getElementById('smsr').style.display='none';
+  document.getElementById('smsf').style.display='none';
+  document.getElementById('smsm').classList.add('on');
 }
 function sst(tp){
   smtp=tp;
