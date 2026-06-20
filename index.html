@@ -494,6 +494,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 <div class="mdl">
   <div class="mh"></div>
   <h2>پیامک بانکی</h2>
+  <p style="font-size:12px;color:var(--t2);line-height:1.8;margin:-8px 0 14px">مبلغ و تاریخ از روی پیامک تشخیص داده می‌شود. لطفاً نوع (درآمد/هزینه) و دسته‌بندی را خودتان انتخاب کنید.</p>
   <div class="fg"><label>متن پیامک را Paste کنید</label>
     <textarea id="smst" placeholder="متن پیامک بانک را اینجا paste کنید..." rows="6"></textarea>
   </div>
@@ -507,6 +508,11 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     <div class="fg"><label>دسته‌بندی</label><select id="scat"></select></div>
     <div class="fg"><label>مبلغ (تومان)</label><input type="number" id="samt" inputmode="numeric"></div>
     <div class="fg"><label>توضیحات</label><input type="text" id="sdsc"></div>
+    <div class="dategrid">
+      <div class="fg"><label>روز</label><input type="number" id="sday" min="1" max="31" inputmode="numeric"></div>
+      <div class="fg"><label>ماه</label><select id="smon"></select></div>
+      <div class="fg"><label>سال</label><input type="number" id="syr" inputmode="numeric"></div>
+    </div>
     <button class="btn btnp" onclick="saveSms()"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>ثبت تراکنش</button>
   </div>
   <button class="btn btns" style="margin-top:10px" onclick="cls('smsm')">انصراف</button>
@@ -697,7 +703,7 @@ let pendingNotifs=[];
 
 function def(){
   return{
-    sm:0,
+    sm:today().m-1,
     appName:'سرمایه',
     tx:[],ten:[],pay:{},
     notifLog:[],
@@ -733,7 +739,7 @@ async function loadState(){
       ST=s?JSON.parse(s):def();
     }catch{ST=def();}
   }
-  SM=ST.sm||0;
+  SM=today().m-1;
 }
 
 async function sv(){
@@ -958,15 +964,22 @@ async function saveTx(){
   const rec={id:etx||uid(),tp:txtp,cat,a,dsc,day,m,y};
   if(etx){const idx=ST.tx.findIndex(t=>t.id===etx);if(idx>=0)ST.tx[idx]=rec;else ST.tx.push(rec);}
   else ST.tx.push(rec);
-  await sv();cls('txm');ntf('✅ ذخیره شد');rDash();rTx();
+  cls('txm');ntf('✅ ذخیره شد');
+  rDash();rTx();
+  await sv();
 }
 async function delTx(){
   if(!etx)return;ST.tx=ST.tx.filter(t=>t.id!==etx);
-  await sv();cls('txm');ntf('🗑️ حذف شد');rDash();rTx();
+  cls('txm');ntf('🗑️ حذف شد');
+  rDash();rTx();
+  await sv();
 }
 
 // ============================================================
 // SMS PARSER - Bank-specific regex patterns
+// Note: we only auto-detect AMOUNT and DATE from the SMS text.
+// Type (income/expense) and category are always chosen by the user,
+// since bank wording for "type" is too inconsistent to trust blindly.
 // ============================================================
 function parseSms(){
   const raw=document.getElementById('smst').value;
@@ -977,22 +990,18 @@ function parseSms(){
     .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
     .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 
-  let amount=0, inRial=false, bankName='', txType='';
+  let amount=0, inRial=false, bankName='';
 
   // ---- BANK MELLI (بانک ملی) ----
   // Format: كارت: 7489 / خريد: 16,950,000 / خريدمانده: 112,045,677
   const melliPurchase=/(?:خريد|خرید)\s*:\s*([\d,،٬]+)(?!\s*مانده)/i.exec(txt);
   const melliBalance=/(?:خريدمانده|خريد\s*مانده|مانده)\s*:\s*([\d,،٬]+)/i.exec(txt);
   if(melliPurchase && melliBalance){
-    // Make sure we pick the PURCHASE amount, not the balance
     const purchaseAmt=parseFloat(melliPurchase[1].replace(/[,،٬]/g,''))||0;
-    const balanceAmt=parseFloat(melliBalance[1].replace(/[,،٬]/g,''))||0;
-    // Sanity check: purchase should be smaller than balance in most cases
     if(purchaseAmt>0){
       amount=purchaseAmt;
       inRial=false; // Bank Melli uses Rials implicitly but amounts are shown as Toman
       bankName='بانک ملی';
-      txType='expense';
     }
   }
 
@@ -1004,15 +1013,6 @@ function parseSms(){
       amount=parseFloat(tejaratAmt[1].replace(/[,،٬]/g,''))||0;
       inRial=true;
       bankName='بانک تجارت';
-      // Detect type from نوع تراکنش
-      const txTypeLine=/نوع\s*تراکنش\s*:\s*(.+)/i.exec(raw);
-      if(txTypeLine){
-        const tt=txTypeLine[1].trim();
-        if(/واريز|واریز|credit|deposit|دريافت|دریافت/i.test(tt)) txType='income';
-        else txType='expense';
-      } else {
-        txType='expense';
-      }
     }
   }
 
@@ -1020,43 +1020,33 @@ function parseSms(){
   // Format: مبلغ:4,000,000ريال / موجودي:5,000,000ريال
   if(!amount){
     const shahrAmt=/مبلغ\s*:\s*([\d,،٬]+)\s*ريال/i.exec(txt);
-    const shahrBalance=/(?:موجودي|موجودی)\s*:\s*([\d,،٬]+)/i.exec(txt);
     if(shahrAmt){
       amount=parseFloat(shahrAmt[1].replace(/[,،٬]/g,''))||0;
       inRial=true;
       bankName='بانک شهر';
-      if(/واريز|واریز/i.test(raw)) txType='income';
-      else if(/انتقال\s*وجه/i.test(raw)) txType='expense';
-      else txType='expense';
     }
   }
 
   // ---- GENERIC PATTERNS (fallback for other banks) ----
   if(!amount){
     const patterns=[
-      // مبلغ: xxx ریال
       {re:/مبلغ\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true},
       {re:/مبلغ\s*:?\s*([\d,،٬\s]+)\s*تومان/i, rial:false},
-      // برداشت/واریز + ریال
-      {re:/برداشت\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true, force:'expense'},
-      {re:/واريز\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true, force:'income'},
-      {re:/واريز\s*:?\s*([\d,،٬\s]+)\s*تومان/i, rial:false, force:'income'},
-      // مبلغ انتقال
+      {re:/برداشت\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true},
+      {re:/واريز\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true},
+      {re:/واريز\s*:?\s*([\d,،٬\s]+)\s*تومان/i, rial:false},
       {re:/مبلغ\s*انتقال\s*:?\s*([\d,،٬\s]+)/i, rial:true},
       // Generic: number followed by ریال (avoid card/account numbers by requiring comma or 7+ digits)
       {re:/([\d]{1,3}(?:[,،٬]\d{3})+)\s*ريال/i, rial:true},
       {re:/([\d]{1,3}(?:[,،٬]\d{3})+)\s*تومان/i, rial:false},
     ];
-    for(const {re,rial,force} of patterns){
+    for(const {re,rial} of patterns){
       const m=txt.match(re);
       if(m){
         const v=parseFloat(m[1].replace(/[,،٬\s]/g,''))||0;
-        // Reject amounts that look like card/account/transaction numbers
-        // Transaction numbers are typically >12 digits; amounts < 10 billion Toman
         if(v>0 && v<100000000000){
           amount=v;
           inRial=rial;
-          if(force) txType=force;
           break;
         }
       }
@@ -1066,11 +1056,23 @@ function parseSms(){
   // Convert Rial to Toman
   if(inRial && amount>0) amount=Math.round(amount/10);
 
-  // Determine transaction direction if not already set
-  if(!txType){
-    const isIncome=/واریز|واريز|دریافت|دريافت|credit|deposit|افزایش|بستانکار|شارژ\s*حساب/i.test(raw);
-    const isExpense=/برداشت|پرداخت|debit|خرید|خريد|کسر|بدهکار|انتقال\s*وجه/i.test(raw);
-    txType=isIncome&&!isExpense?'income':isExpense?'expense':'expense';
+  // ---- DATE DETECTION ----
+  // Looks for Jalali-style dates like 1404/03/15, 1404-03-15, or 15/03/1404
+  let det=today();
+  let dateFound=false;
+  let dm=/(?:تاریخ|تاريخ)\s*:?\s*(1[34]\d{2})[\/\-](\d{1,2})[\/\-](\d{1,2})/.exec(txt)
+      || /\b(1[34]\d{2})[\/\-](\d{1,2})[\/\-](\d{1,2})\b/.exec(txt);
+  if(dm){
+    const y=parseInt(dm[1]),m=parseInt(dm[2]),d=parseInt(dm[3]);
+    if(m>=1&&m<=12&&d>=1&&d<=31){det={y,m,d};dateFound=true;}
+  }
+  if(!dateFound){
+    dm=/(?:تاریخ|تاريخ)\s*:?\s*(\d{1,2})[\/\-](\d{1,2})[\/\-](1[34]\d{2})/.exec(txt)
+      || /\b(\d{1,2})[\/\-](\d{1,2})[\/\-](1[34]\d{2})\b/.exec(txt);
+    if(dm){
+      const d=parseInt(dm[1]),m=parseInt(dm[2]),y=parseInt(dm[3]);
+      if(m>=1&&m<=12&&d>=1&&d<=31){det={y,m,d};dateFound=true;}
+    }
   }
 
   // Build description
@@ -1079,23 +1081,37 @@ function parseSms(){
 
   const res=document.getElementById('smsr');
   res.style.display='block';
+  document.getElementById('smsf').style.display='block';
+  fillMon('smon',det.m-1);
+  document.getElementById('sday').value=det.d;
+  document.getElementById('syr').value=det.y;
+  // No type pre-selection — user must choose income/expense themselves
+  smtp=null;
+  document.getElementById('sbi').className='tb';
+  document.getElementById('sbe').className='tb';
+  document.getElementById('scat').innerHTML='<option value="">ابتدا نوع را انتخاب کنید</option>';
   if(amount>0){
     res.innerHTML=`<div class="smsbox"><div class="smsd"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>تشخیص داده شد${bankName?' — '+bankName:''}</div>
       مبلغ: <strong>${nf(amount)} تومان</strong><br>
-      نوع: <strong>${txType==='income'?'واریز (درآمد)':'برداشت (هزینه)'}</strong></div>`;
-    document.getElementById('smsf').style.display='block';
-    sst(txType);
+      تاریخ: <strong>${dateFound?'از پیامک ('+toFa(det.d)+' '+MFA[det.m-1]+' '+toFa(det.y)+')':'امروز'}</strong><br>
+      <span style="color:var(--t2)">نوع تراکنش و دسته‌بندی را خودتان مشخص کنید 👇</span></div>`;
     document.getElementById('samt').value=amount;
     document.getElementById('sdsc').value=desc;
   } else {
     res.innerHTML='<div class="smsbox" style="background:var(--rdl);color:var(--rd)">مبلغی تشخیص داده نشد. لطفاً مبلغ را دستی وارد کنید.</div>';
-    document.getElementById('smsf').style.display='block';sst('expense');
   }
 }
 function openSms(){
   document.getElementById('smst').value='';
   document.getElementById('smsr').style.display='none';
   document.getElementById('smsf').style.display='none';
+  document.getElementById('samt').value='';document.getElementById('sdsc').value='';
+  const t=today();
+  fillMon('smon',t.m-1);
+  document.getElementById('sday').value=t.d;document.getElementById('syr').value=t.y;
+  smtp=null;
+  document.getElementById('sbi').className='tb';
+  document.getElementById('sbe').className='tb';
   document.getElementById('smsm').classList.add('on');
 }
 function sst(tp){
@@ -1105,13 +1121,19 @@ function sst(tp){
   fillCat('scat',tp);
 }
 async function saveSms(){
+  if(!smtp){ntf('⚠️ نوع تراکنش (درآمد/هزینه) را انتخاب کنید');return;}
   const a=toLn(document.getElementById('samt').value);
   const cat=document.getElementById('scat').value;
   const dsc=document.getElementById('sdsc').value.trim();
+  const day=parseInt(document.getElementById('sday').value)||1;
+  const m=parseInt(document.getElementById('smon').value);
+  const y=parseInt(document.getElementById('syr').value)||today().y;
   if(!a||!cat){ntf('⚠️ مبلغ و دسته‌بندی الزامی است');return;}
-  const t=today();
-  ST.tx.push({id:uid(),tp:smtp,cat,a,dsc:dsc||'پیامک بانکی',day:t.d,m:t.m-1,y:t.y});
-  await sv();cls('smsm');ntf('✅ تراکنش ثبت شد');rDash();rTx();
+  const rec={id:uid(),tp:smtp,cat,a,dsc:dsc||'پیامک بانکی',day,m,y};
+  cls('smsm');ntf('✅ تراکنش ثبت شد');
+  ST.tx.push(rec);
+  rDash();rTx();
+  await sv();
 }
 
 // ============================================================
