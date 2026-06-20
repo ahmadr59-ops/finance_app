@@ -1,10 +1,14 @@
-const CACHE = 'maliyar-v1';
+const CACHE = 'sarmaye-v2';
 const FILES = [
   '/finance_app/',
   '/finance_app/index.html',
+  '/finance_app/manifest.json',
+  '/finance_app/icon-32.png',
+  '/finance_app/icon-152.png',
+  '/finance_app/icon-167.png',
+  '/finance_app/icon-180.png',
   '/finance_app/icon-192.png',
-  '/finance_app/icon-512.png',
-  '/finance_app/icon-180.png'
+  '/finance_app/icon-512.png'
 ];
 
 self.addEventListener('install', e => {
