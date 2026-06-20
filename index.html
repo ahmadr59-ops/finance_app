@@ -271,6 +271,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     <div class="sc exp"><div class="lb">هزینه</div><div class="vl" id="de">۰</div><div class="ut">تومان</div></div>
   </div>
   <div class="bal-card" style="margin:8px 14px 0"><span class="lb">مانده ماه</span><span class="vl" id="db">۰ تومان</span></div>
+  <div class="bal-card" id="depcard" style="margin:8px 14px 0;display:none"><span class="lb">ودیعه‌های نزد شما (امانی)</span><span class="vl" id="depTotal" style="color:var(--pp)">۰ تومان</span></div>
 
   <!-- Quick access: horizontal row -->
   <div style="display:flex;gap:8px;padding:10px 14px 0">
@@ -857,6 +858,14 @@ function rDash(){
   db.textContent=(b<0?'-':'')+nf(Math.abs(b))+' تومان';
   db.style.color=b>=0?'var(--gr)':'var(--rd)';
   rDonut(txs,e);
+  const depTotal=(ST.ten||[]).filter(x=>x.depReceived&&!x.depReturned).reduce((s,x)=>s+(x.dep||0),0);
+  const depcard=document.getElementById('depcard');
+  if(depTotal>0){
+    depcard.style.display='flex';
+    document.getElementById('depTotal').textContent=nf(depTotal)+' تومان';
+  } else {
+    depcard.style.display='none';
+  }
   const rc=document.getElementById('rtx');
   const last=[...txs].reverse().slice(0,3);
   rc.innerHTML=last.length?last.map(txHtml).join(''):emptyHtml('bag','تراکنشی ثبت نشده');
@@ -1192,10 +1201,11 @@ function rTen(){
         <div>${sb}</div>
       </div>
       <div class="tbody" id="tb${ten.id}">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
           <div style="background:var(--bg);border-radius:12px;padding:10px"><div style="color:var(--t2);font-size:11.5px;font-weight:600">اجاره ماهانه</div><div style="font-weight:700;color:var(--pr);font-size:14px;margin-top:3px">${nf(ten.rent)} ت</div></div>
           <div style="background:var(--bg);border-radius:12px;padding:10px"><div style="color:var(--t2);font-size:11.5px;font-weight:600">ودیعه</div><div style="font-weight:700;font-size:14px;margin-top:3px">${nf(ten.dep)} ت</div></div>
         </div>
+        ${depStatusHtml(ten)}
         ${ten.note?`<div style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.7">${ten.note}</div>`:''}
         <div style="display:flex;gap:8px">
           <button onclick="openPay('${ten.id}')" style="flex:1;padding:11px;border-radius:12px;border:none;background:var(--prl);color:var(--pr);font-size:13px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif">سابقه پرداخت</button>
@@ -1205,6 +1215,45 @@ function rTen(){
     </div>`;
   }).join('');
   alrt.innerHTML=up.length?`<div class="alrt"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span>پرداخت نشده این ماه: ${up.join('، ')}</span></div>`:'';
+}
+function depStatusHtml(ten){
+  if(!ten.dep) return '';
+  if(ten.depReturned){
+    return `<div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:12px;padding:9px 12px;margin-bottom:10px;font-size:12px">
+      <span style="color:var(--t2)">ودیعه بازگردانده شد ${ten.depReturnedDate?'— '+ten.depReturnedDate:''}</span>
+      <button onclick="event.stopPropagation();undoDepReturn('${ten.id}')" style="background:none;border:none;color:var(--pr);font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif">بازگردانی وضعیت</button>
+    </div>`;
+  }
+  if(ten.depReceived){
+    return `<div style="display:flex;align-items:center;justify-content:space-between;background:var(--ppl);border-radius:12px;padding:9px 12px;margin-bottom:10px;font-size:12px">
+      <span style="color:var(--pp);font-weight:600">ودیعه نزد شماست ${ten.depReceivedDate?'— دریافت: '+ten.depReceivedDate:''}</span>
+      <button onclick="event.stopPropagation();markDepReturned('${ten.id}')" style="background:#fff;border:none;border-radius:8px;padding:5px 9px;color:var(--pp);font-size:11px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif">ثبت بازگشت</button>
+    </div>`;
+  }
+  return `<div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:12px;padding:9px 12px;margin-bottom:10px;font-size:12px">
+    <span style="color:var(--t2)">ودیعه هنوز دریافت نشده</span>
+    <button onclick="event.stopPropagation();markDepReceived('${ten.id}')" style="background:var(--prl);border:none;border-radius:8px;padding:5px 9px;color:var(--pr);font-size:11px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif">ثبت دریافت</button>
+  </div>`;
+}
+async function markDepReceived(id){
+  const t=ST.ten.find(x=>x.id===id);if(!t)return;
+  const d=today();
+  t.depReceived=true;t.depReceivedDate=`${toFa(d.d)} ${MFA[d.m-1]} ${toFa(d.y)}`;
+  rTen();rDash();
+  await sv();ntf('✅ دریافت ودیعه ثبت شد');
+}
+async function markDepReturned(id){
+  const t=ST.ten.find(x=>x.id===id);if(!t)return;
+  const d=today();
+  t.depReturned=true;t.depReturnedDate=`${toFa(d.d)} ${MFA[d.m-1]} ${toFa(d.y)}`;
+  rTen();rDash();
+  await sv();ntf('✅ بازگشت ودیعه ثبت شد');
+}
+async function undoDepReturn(id){
+  const t=ST.ten.find(x=>x.id===id);if(!t)return;
+  t.depReturned=false;t.depReturnedDate=null;
+  rTen();rDash();
+  await sv();ntf('↩️ وضعیت بازگردانی شد');
 }
 function tog(id){document.getElementById(id)?.classList.toggle('on');}
 function openTM(id){
