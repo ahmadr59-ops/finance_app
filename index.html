@@ -544,7 +544,6 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   <div class="fg"><label>نوع ملک</label><select id="ttyp"><option value="مسکونی">مسکونی</option><option value="تجاری">تجاری</option></select></div>
   <div class="fg"><label>اجاره ماهانه (تومان)</label><input type="number" id="trent" inputmode="numeric"></div>
   <div class="fg"><label>ودیعه (تومان)</label><input type="number" id="tdep" inputmode="numeric"></div>
-  <div class="fg"><label>سررسید پرداخت (روز ماه)</label><input type="number" id="tdue" min="1" max="31" inputmode="numeric" placeholder="مثال: 5"></div>
   <div class="fg"><label>تاریخ شروع قرارداد</label>
     <div style="display:grid;grid-template-columns:1fr 1.5fr 1.2fr;gap:8px">
       <input type="number" id="tstart_d" min="1" max="31" inputmode="numeric" placeholder="روز">
@@ -1259,12 +1258,20 @@ function rTen(){
     const key=`${ten.id}_${t.y}_${t.m}`;const pay=ST.pay[key];
     const isPaid=pay&&pay.status==='paid';
     const isPartial=pay&&pay.status==='partial';
-    if(!isPaid&&!isPartial)up.push(ten.n);
+    const startM=ten.start_m!==undefined?ten.start_m:0;
+    const firstRentM=(startM+1)%12;
+    const firstRentY=(ten.start_y||t.y)+(startM+1>11?1:0);
+    const curVal=t.y*100+(t.m-1);
+    const firstVal=firstRentY*100+firstRentM;
+    const rentDue=curVal>=firstVal;
+    if(rentDue&&!isPaid&&!isPartial)up.push(ten.n);
     const sb=isPaid
       ?`<span class="bdg bg"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>پرداخت</span>`
       :isPartial
         ?`<span class="bdg" style="background:#FFF3CD;color:#856404">ناقص</span>`
-        :`<span class="bdg br2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>در انتظار</span>`;
+        :rentDue
+          ?`<span class="bdg br2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>در انتظار</span>`
+          :`<span class="bdg" style="background:var(--bg);color:var(--t3)">قرارداد جاری</span>`;
     return `<div class="tcrd">
       <div class="thdr" onclick="tog('tb${ten.id}')">
         <div class="tav">${svgIc(ten.tp==='تجاری'?'building':'home')}</div>
@@ -1336,7 +1343,7 @@ function openTM(id){
     document.getElementById('tenmt').textContent='ویرایش واحد';
     document.getElementById('tnm').value=t.n;document.getElementById('tunit').value=t.unit;
     document.getElementById('ttyp').value=t.tp;document.getElementById('trent').value=t.rent;
-    document.getElementById('tdep').value=t.dep||'';document.getElementById('tdue').value=t.due||'';
+    document.getElementById('tdep').value=t.dep||'';
     document.getElementById('tnote').value=t.note||'';
     document.getElementById('tstart_d').value=t.start_d||1;
     document.getElementById('tstart_y').value=t.start_y||today().y;
@@ -1344,7 +1351,7 @@ function openTM(id){
     document.getElementById('dtenb').style.display='block';
   } else {
     document.getElementById('tenmt').textContent='واحد جدید';
-    ['tnm','tunit','trent','tdep','tdue','tnote'].forEach(i=>document.getElementById(i).value='');
+    ['tnm','tunit','trent','tdep','tnote'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('tstart_d').value=today().d;
     document.getElementById('tstart_y').value=today().y;
     document.getElementById('dtenb').style.display='none';
@@ -1357,7 +1364,7 @@ async function saveTen(){
   const tp=document.getElementById('ttyp').value;
   const rent=toLn(document.getElementById('trent').value);
   const dep=toLn(document.getElementById('tdep').value);
-  const due=parseInt(document.getElementById('tdue').value)||1;
+  const due=parseInt(document.getElementById('tstart_d').value)||1; // روز شروع = روز سررسید
   const note=document.getElementById('tnote').value.trim();
   const start_d=parseInt(document.getElementById('tstart_d').value)||1;
   const start_m=parseInt(document.getElementById('tstart_m').value)||0;
@@ -1376,39 +1383,56 @@ function openPay(tid){
   const t=ST.ten.find(x=>x.id===tid);if(!t)return;
   document.getElementById('paymt').textContent='پرداخت‌های '+t.n;
   const td=today();
-  // Build month list from month after contract start
+
+  // Contract start: e.g. 1405/03/01 → first rent month = startM+1
   const startY=t.start_y||td.y;
-  const startM=t.start_m!==undefined?t.start_m:0; // 0-based
-  // Generate list: from first rent month (startM+1) to current month of same year
-  let months=[];
-  // Go through all months of start year and current year
-  for(let y=startY;y<=td.y;y++){
-    const mFrom=(y===startY)?startM+1:0; // first rent month after contract start
-    const mTo=(y===td.y)?td.m-1:11;
-    for(let m=mFrom;m<=mTo;m++){
-      months.push({y,m});
-    }
-  }
-  // Reverse: newest first
-  months.reverse();
+  const startM=t.start_m!==undefined?t.start_m:0; // 0-based month of contract start
+  const firstRentM=(startM+1)%12;                  // 0-based first rent month
+  const firstRentY=startM+1>11?startY+1:startY;
+
+  // Always show 12 months of current year (0-based: 0=فروردین ... 11=اسفند)
+  const months=Array.from({length:12},(_,i)=>i);
 
   let h='';
-  months.forEach(({y,m})=>{
+  months.forEach(m=>{
+    const y=td.y;
     const key=`${tid}_${y}_${m}`;
     const pay=ST.pay[key];
     const isPaid=pay&&pay.status==='paid';
     const isPartial=pay&&pay.status==='partial';
+
+    // Is this month before first rent month? (grey, disabled)
+    const curVal=y*100+m;
+    const firstVal=firstRentY*100+firstRentM;
+    const isBeforeContract=curVal<firstVal;
+
+    // Is this a future month (no due yet)?
+    const isFuture=y>td.y||(y===td.y&&m>td.m-1);
+
+    if(isBeforeContract){
+      // Grey, disabled - part of contract period but no rent due
+      h+=`<div class="pr" style="opacity:.38;padding:11px 0">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--t3)">${MFA[m]} ${toFa(y)}</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:2px">قبل از شروع اجاره</div>
+        </div>
+        <span style="font-size:12px;color:var(--t3)">—</span>
+      </div>`;
+      return;
+    }
+
+    // Status badge
     let statusHtml='';
     if(isPaid){
       statusHtml=`<span class="bdg bg"><svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;stroke-width:2.5;fill:none"><path d="M20 6L9 17l-5-5"/></svg>پرداخت کامل</span>`;
       if(pay.date) statusHtml+=`<div style="font-size:10.5px;color:var(--t3);margin-top:3px">${pay.date} · ${nf(pay.amount||t.rent)} ت</div>`;
     } else if(isPartial){
-      statusHtml=`<span class="bdg" style="background:#FFF3CD;color:#856404">پرداخت ناقص</span>`;
-      statusHtml+=`<div style="font-size:10.5px;color:var(--am);margin-top:3px">${nf(pay.amount)} از ${nf(t.rent)} ت`;
-      if(pay.date) statusHtml+=` · ${pay.date}`;
-      statusHtml+=`</div>`;
+      statusHtml=`<span class="bdg" style="background:#FFF3CD;color:#856404">ناقص</span>`;
+      statusHtml+=`<div style="font-size:10.5px;color:var(--am);margin-top:3px">${nf(pay.amount)} از ${nf(t.rent)} ت${pay.date?' · '+pay.date:''}</div>`;
+    } else if(isFuture){
+      statusHtml=`<span style="font-size:12px;color:var(--t3)">آینده</span>`;
     } else {
-      statusHtml=`<span class="bdg br2">پرداخت نشده</span>`;
+      statusHtml=`<span class="bdg br2">در انتظار</span>`;
     }
 
     h+=`<div class="pr" style="flex-direction:column;align-items:flex-start;gap:8px;padding:12px 0">
@@ -1425,8 +1449,7 @@ function openPay(tid){
           ${isPaid||isPartial?'ویرایش پرداخت':'ثبت پرداخت'}
         </button>
         ${isPaid||isPartial?`<button onclick="clearPay('${tid}','${y}','${m}')"
-          style="padding:8px 12px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:var(--t3);font-size:12px;font-weight:600;cursor:pointer;font-family:'Vazirmatn',sans-serif">
-          حذف</button>`:''}
+          style="padding:8px 12px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:var(--t3);font-size:12px;cursor:pointer;font-family:'Vazirmatn',sans-serif">حذف</button>`:''}
       </div>
       <div id="payform_${tid}_${y}_${m}" style="display:none;background:var(--bg);border-radius:12px;padding:12px;width:100%">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
@@ -1434,12 +1457,12 @@ function openPay(tid){
             <input type="number" id="pamt_${tid}_${y}_${m}" value="${pay?pay.amount||t.rent:t.rent}" inputmode="numeric"
               style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:'Vazirmatn',sans-serif"></div>
           <div><label style="font-size:11.5px;color:var(--t2);font-weight:600;display:block;margin-bottom:4px">تاریخ واریز</label>
-            <input type="text" id="pdate_${tid}_${y}_${m}" value="${pay?pay.date||'':''}" placeholder="مثال: ۱۴۰۵/۰۴/۰۱"
+            <input type="text" id="pdate_${tid}_${y}_${m}" value="${pay?pay.date||'':''}" placeholder="۱۴۰۵/۰۴/۰۱"
               style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:'Vazirmatn',sans-serif"></div>
         </div>
         <div style="display:flex;gap:6px">
           <button onclick="savePay('${tid}','${y}','${m}','paid')"
-            style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--gr);color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif">کامل</button>
+            style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--gr);color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif">کامل ✓</button>
           <button onclick="savePay('${tid}','${y}','${m}','partial')"
             style="flex:1;padding:8px;border-radius:10px;border:none;background:#F0A500;color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif">ناقص</button>
           <button onclick="document.getElementById('payform_${tid}_${y}_${m}').style.display='none'"
@@ -1449,9 +1472,10 @@ function openPay(tid){
     </div>`;
   });
 
-  document.getElementById('payc').innerHTML=h||'<div style="text-align:center;padding:30px;color:var(--t3)">بر اساس تاریخ شروع قرارداد، ماهی برای نمایش وجود ندارد</div>';
+  document.getElementById('payc').innerHTML=h;
   document.getElementById('paym').classList.add('on');
 }
+
 
 function showPayForm(tid,y,m){
   // Hide all other forms first
@@ -1601,17 +1625,15 @@ function chkDue(){
   const t=today();
   const pending=[];
   ST.ten.forEach(ten=>{
-    // Only check rent due if contract has started and first rent month has passed
-    const startY=ten.start_y||t.y;
     const startM=ten.start_m!==undefined?ten.start_m:0;
-    // First rent month is startM+1
-    const firstRentM=startM+1>11?0:startM+1;
-    const firstRentY=startM+1>11?startY+1:startY;
-    // Is current month >= first rent month?
+    const firstRentM=(startM+1)%12;
+    const firstRentY=(ten.start_y||t.y)+(startM+1>11?1:0);
     const curVal=t.y*100+(t.m-1);
     const firstVal=firstRentY*100+firstRentM;
-    if(curVal<firstVal) return; // contract not started rent yet
-    if(t.d>=ten.due){
+    if(curVal<firstVal) return; // rent not started yet
+    // due day = start_d
+    const dueDay=ten.start_d||1;
+    if(t.d>=dueDay){
       const key=`${ten.id}_${t.y}_${t.m-1}`;
       const pay=ST.pay[key];
       if(!pay||pay.status==='partial'){
@@ -1620,10 +1642,7 @@ function chkDue(){
           const msg=pay&&pay.status==='partial'
             ?`${ten.n} — اجاره ${MFA[t.m-1]} ${toFa(t.y)} ناقص است (${nf(pay.amount)} از ${nf(ten.rent)} تومان)`
             :`${ten.n} — اجاره ${MFA[t.m-1]} ${toFa(t.y)} پرداخت نشده`;
-          new Notification('سرمایه — یادآور اجاره',{
-            body:msg,
-            icon:'icon-192.png'
-          });
+          new Notification('سرمایه — یادآور اجاره',{body:msg,icon:'icon-192.png'});
         }
       }
     }
@@ -1634,10 +1653,8 @@ function chkDue(){
     pending.forEach(ten=>{
       const exists=ST.notifLog.find(n=>n.tenId===ten.id&&n.date===today_str);
       if(!exists){
-        ST.notifLog.unshift({
-          id:uid(),tenId:ten.id,tenName:ten.n,
-          date:today_str,month:MFA[t.m-1],year:t.y,read:false
-        });
+        ST.notifLog.unshift({id:uid(),tenId:ten.id,tenName:ten.n,
+          date:today_str,month:MFA[t.m-1],year:t.y,read:false});
       }
     });
     ST.notifLog=ST.notifLog.slice(0,30);
