@@ -548,30 +548,31 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 </div>
 </div>
 
-<!-- MODAL: Category add/edit -->
-<div class="ov" id="catm">
-<div class="mdl">
-  <div class="mh"></div>
-  <h2>دسته‌بندی جدید</h2>
-  <div class="fg"><label>نام</label><input type="text" id="cnm" placeholder="مثال: تفریح"></div>
-  <div class="fg"><label>آیکون</label>
-    <div id="cion-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px"></div>
-    <input type="hidden" id="cion" value="more">
-  </div>
-  <div class="fg"><label>نوع</label><select id="ctyp"><option value="income">درآمد</option><option value="expense">هزینه</option></select></div>
-  <button class="btn btnp" onclick="saveCat()">ذخیره</button>
-  <button class="btn btns" onclick="cls('catm')">انصراف</button>
-</div>
-</div>
-
-<!-- MODAL: Category manager -->
+<!-- MODAL: Category manager (with inline add/edit - no nested modal) -->
 <div class="ov" id="catmgr">
 <div class="mdl">
   <div class="mh"></div>
   <h2 id="catmgr-title">مدیریت دسته‌بندی‌ها</h2>
-  <div id="catmgr-list" style="margin-bottom:12px"></div>
-  <button class="btn btnp" id="catmgr-add" onclick="">افزودن دسته‌بندی جدید</button>
-  <button class="btn btns" onclick="cls('catmgr')">بستن</button>
+  <div id="catmgr-list" style="margin-bottom:14px"></div>
+
+  <!-- Inline add/edit form - always inside same modal -->
+  <div id="catm-inline" style="display:none;background:var(--bg);border-radius:14px;padding:14px;margin-bottom:12px">
+    <div style="font-size:13.5px;font-weight:700;margin-bottom:12px" id="catm-inline-title">دسته‌بندی جدید</div>
+    <input type="hidden" id="cedit-id" value="">
+    <input type="hidden" id="ctyp" value="income">
+    <div class="fg"><label>نام دسته‌بندی</label><input type="text" id="cnm" placeholder="مثال: تفریح"></div>
+    <div class="fg" style="margin-bottom:0"><label>آیکون</label>
+      <div id="cion-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:4px"></div>
+      <input type="hidden" id="cion" value="more">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btnp" onclick="saveCat()" style="flex:1;margin:0">ذخیره</button>
+      <button class="btn btns" onclick="hideCatForm()" style="flex:1;margin:0">انصراف</button>
+    </div>
+  </div>
+
+  <button class="btn btnp" id="catmgr-add" onclick="">➕ دسته‌بندی جدید</button>
+  <button class="btn btns" onclick="cls('catmgr')" style="margin-top:8px">بستن</button>
 </div>
 </div>
 
@@ -867,7 +868,7 @@ function rDash(){
     depcard.style.display='none';
   }
   const rc=document.getElementById('rtx');
-  const last=[...txs].reverse().slice(0,3);
+  const last=sortByDate(txs).slice(0,3);
   rc.innerHTML=last.length?last.map(txHtml).join(''):emptyHtml('bag','تراکنشی ثبت نشده');
   const isIos=/iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone=window.navigator.standalone;
@@ -920,9 +921,16 @@ function txHtml(t){
     <div class="txa" style="color:${isI?'var(--gr)':'var(--rd)'}">${isI?'+':'-'}${nf(t.a)}</div>
   </div>`;
 }
+function sortByDate(txs){
+  return [...txs].sort((a,b)=>{
+    const da=(a.y||1404)*10000+(a.m||0)*100+(a.day||1);
+    const db=(b.y||1404)*10000+(b.m||0)*100+(b.day||1);
+    return db-da;
+  });
+}
 function rTx(){
   updateMonthLabel();
-  const txs=[...getTx(SM)].reverse();
+  const txs=sortByDate(getTx(SM));
   const c=document.getElementById('txl');
   c.innerHTML=txs.length?txs.map(txHtml).join(''):emptyHtml('bag','تراکنشی در این ماه ندارید. دکمه + را بزنید');
 }
@@ -1149,16 +1157,41 @@ async function saveSms(){
 // CATEGORIES
 // ============================================================
 const ICON_LABELS={briefcase:'شغل',home:'خانه',building:'ساختمان','trend-up':'سرمایه',coin:'سکه',cart:'خرید',heart:'سلامت',piggy:'پس‌انداز',shirt:'پوشاک',car:'خودرو',health:'پزشکی',book:'آموزش',gift:'هدیه',more:'سایر',zap:'انرژی',bag:'کیف'};
-function openCat(tp){
-  document.getElementById('cnm').value='';
-  const grid=document.getElementById('cion-grid');
-  grid.innerHTML=Object.keys(ICONS).map((k,idx)=>
-    `<button type="button" onclick="pickCatIcon('${k}')" id="cicon-${k}" style="aspect-ratio:1;border-radius:12px;border:1.5px solid ${idx===0?'var(--pr)':'var(--border)'};background:${idx===0?'var(--prl)':'#fff'};display:flex;align-items:center;justify-content:center;cursor:pointer;color:${idx===0?'var(--pr)':'var(--t2)'}"><svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round">${ICONS[k]}</svg></button>`
-  ).join('');
-  document.getElementById('cion').value=Object.keys(ICONS)[0];
+function openCat(tp, editId){
+  const isEdit=!!editId;
+  document.getElementById('catm-inline-title').textContent=isEdit?'ویرایش دسته‌بندی':'دسته‌بندی جدید';
+  document.getElementById('cedit-id').value=editId||'';
   document.getElementById('ctyp').value=tp;
-  document.getElementById('catm').classList.add('on');
+
+  // Prefill if editing
+  if(isEdit){
+    const cat=ST.cats[tp].find(c=>c.id===editId);
+    document.getElementById('cnm').value=cat?cat.n:'';
+    const firstIcon=cat?cat.i:Object.keys(ICONS)[0];
+    buildIconGrid(firstIcon);
+  } else {
+    document.getElementById('cnm').value='';
+    buildIconGrid(Object.keys(ICONS)[0]);
+  }
+
+  document.getElementById('catm-inline').style.display='block';
+  // Scroll to form
+  setTimeout(()=>document.getElementById('catm-inline').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
 }
+
+function buildIconGrid(selectedKey){
+  const grid=document.getElementById('cion-grid');
+  grid.innerHTML=Object.keys(ICONS).map(k=>
+    `<button type="button" onclick="pickCatIcon('${k}')" id="cicon-${k}"
+      style="aspect-ratio:1;border-radius:10px;border:1.5px solid ${k===selectedKey?'var(--pr)':'var(--border)'};
+      background:${k===selectedKey?'var(--prl)':'#fff'};display:flex;align-items:center;justify-content:center;
+      cursor:pointer;color:${k===selectedKey?'var(--pr)':'var(--t2)'}">
+      <svg viewBox="0 0 24 24" style="width:17px;height:17px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round">${ICONS[k]}</svg>
+    </button>`
+  ).join('');
+  document.getElementById('cion').value=selectedKey;
+}
+
 function pickCatIcon(key){
   document.getElementById('cion').value=key;
   Object.keys(ICONS).forEach(k=>{
@@ -1169,15 +1202,33 @@ function pickCatIcon(key){
     el.style.color=active?'var(--pr)':'var(--t2)';
   });
 }
+
+function hideCatForm(){
+  document.getElementById('catm-inline').style.display='none';
+  document.getElementById('cnm').value='';
+  document.getElementById('cedit-id').value='';
+}
+
 async function saveCat(){
   const n=document.getElementById('cnm').value.trim();
   const i=document.getElementById('cion').value||'more';
   const tp=document.getElementById('ctyp').value;
+  const editId=document.getElementById('cedit-id').value;
   if(!n){ntf('⚠️ نام الزامی است');return;}
-  ST.cats[tp].push({id:'c'+uid(),n,i,c:CLR[ST.cats[tp].length%CLR.length]});
-  await sv();cls('catm');ntf('✅ اضافه شد');fillCat('tcat',txtp);
-  // Refresh manager if open
-  if(document.getElementById('catmgr').classList.contains('on')) openCatMgr(tp);
+  if(editId){
+    // Edit existing
+    const idx=ST.cats[tp].findIndex(c=>c.id===editId);
+    if(idx>=0) ST.cats[tp][idx]={...ST.cats[tp][idx],n,i};
+    ntf('✅ ویرایش شد');
+  } else {
+    // Add new
+    ST.cats[tp].push({id:'c'+uid(),n,i,c:CLR[ST.cats[tp].length%CLR.length]});
+    ntf('✅ اضافه شد');
+  }
+  await sv();
+  hideCatForm();
+  fillCat('tcat',txtp);
+  openCatMgr(tp); // refresh list
 }
 
 // ============================================================
@@ -1358,20 +1409,32 @@ async function saveAppName(){
 // Category manager in settings
 function openCatMgr(tp){
   catMgrType=tp;
+  hideCatForm();
   document.getElementById('catmgr-title').textContent=tp==='income'?'دسته‌بندی‌های درآمد':'دسته‌بندی‌های هزینه';
   document.getElementById('catmgr-add').onclick=()=>openCat(tp);
   const list=document.getElementById('catmgr-list');
-  list.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
-    ${ST.cats[tp].map(c=>`<div class="cat-chip">
-      <span style="color:${c.c};margin-left:2px">${svgIc(c.i).replace('svg viewBox','svg style="width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none" viewBox')}</span>
-      ${c.n}
-      <button class="cat-chip-del" onclick="delCat('${tp}','${c.id}')">×</button>
-    </div>`).join('')}
+  list.innerHTML=`<div style="display:flex;flex-direction:column;gap:8px">
+    ${ST.cats[tp].map(c=>`
+      <div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:10px 12px;border:1px solid var(--border)">
+        <span style="width:32px;height:32px;border-radius:10px;background:${c.c}18;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:${c.c};stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round">${ICONS[c.i]||ICONS.more}</svg>
+        </span>
+        <span style="flex:1;font-size:13.5px;font-weight:600">${c.n}</span>
+        <button onclick="openCat('${tp}','${c.id}')"
+          style="background:var(--prl);border:none;border-radius:8px;padding:5px 10px;font-size:12px;color:var(--pr);cursor:pointer;font-family:'Vazirmatn',sans-serif;font-weight:600">
+          ویرایش
+        </button>
+        <button onclick="delCat('${tp}','${c.id}')"
+          style="background:var(--rdl);border:none;border-radius:8px;padding:5px 10px;font-size:12px;color:var(--rd);cursor:pointer;font-family:'Vazirmatn',sans-serif;font-weight:600">
+          حذف
+        </button>
+      </div>`).join('')}
   </div>`;
   document.getElementById('catmgr').classList.add('on');
 }
 async function delCat(tp,id){
   if(ST.cats[tp].length<=1){ntf('⚠️ حداقل یک دسته لازم است');return;}
+  if(!confirm('این دسته‌بندی حذف شود؟')) return;
   ST.cats[tp]=ST.cats[tp].filter(c=>c.id!==id);
   await sv();ntf('🗑️ حذف شد');openCatMgr(tp);
 }
