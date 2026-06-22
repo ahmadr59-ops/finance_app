@@ -180,7 +180,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 .alrt svg{width:20px;height:20px;stroke:var(--rd);stroke-width:1.8;fill:none;flex-shrink:0}
 
 /* Report bars */
-.bc{display:flex;align-items:flex-end;gap:7px;height:130px;overflow-x:auto;padding:0 2px;scrollbar-width:none}
+.bc{display:flex;align-items:flex-end;gap:7px;height:160px;overflow-x:auto;padding:0 2px;scrollbar-width:none}
 .bc::-webkit-scrollbar{display:none}
 .bg2{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:34px}
 .bc2{display:flex;gap:3px;align-items:flex-end;height:105px}
@@ -271,25 +271,34 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     <div class="sc exp"><div class="lb">هزینه</div><div class="vl" id="de">۰</div><div class="ut">تومان</div></div>
   </div>
   <div class="bal-card" style="margin:8px 14px 0"><span class="lb">مانده ماه</span><span class="vl" id="db">۰ تومان</span></div>
-  <div class="bal-card" id="depcard" style="margin:8px 14px 0;display:none"><span class="lb">ودیعه‌های نزد شما (امانی)</span><span class="vl" id="depTotal" style="color:var(--pp)">۰ تومان</span></div>
 
-  <!-- Quick access: horizontal row -->
-  <div style="display:flex;gap:8px;padding:10px 14px 0">
-    <button class="qa-item" style="flex:1;padding:10px 4px" onclick="openTx()">
-      <div class="qa-ic" style="background:var(--grl);width:38px;height:38px;border-radius:12px"><svg viewBox="0 0 24 24" style="stroke:var(--gr)"><path d="M12 5v14M5 12h14"/></svg></div>
-      <div class="qa-lb" style="font-size:11px">تراکنش</div>
+  <!-- Quick access: 2 main action buttons - professional 3D style -->
+  <div style="display:flex;gap:12px;padding:12px 14px 0">
+    <button onclick="openTx()" style="flex:1;padding:16px 12px;border-radius:18px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;
+      background:linear-gradient(160deg,#34C759 0%,#1E8C3A 100%);
+      box-shadow:0 6px 0 #156B2B,0 8px 16px rgba(30,140,58,0.35);
+      color:#fff;display:flex;flex-direction:column;align-items:center;gap:8px;
+      active:transform:translateY(3px);transition:transform .1s,box-shadow .1s"
+      onpointerdown="this.style.transform='translateY(3px)';this.style.boxShadow='0 3px 0 #156B2B,0 4px 8px rgba(30,140,58,0.3)'"
+      onpointerup="this.style.transform='';this.style.boxShadow='0 6px 0 #156B2B,0 8px 16px rgba(30,140,58,0.35)'"
+      onpointercancel="this.style.transform='';this.style.boxShadow='0 6px 0 #156B2B,0 8px 16px rgba(30,140,58,0.35)'">
+      <span style="width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
+      </span>
+      <span style="font-size:14px;font-weight:800;letter-spacing:.3px">تراکنش جدید</span>
     </button>
-    <button class="qa-item" style="flex:1;padding:10px 4px" onclick="openSms()">
-      <div class="qa-ic" style="background:var(--prl);width:38px;height:38px;border-radius:12px"><svg viewBox="0 0 24 24" style="stroke:var(--pr)"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-      <div class="qa-lb" style="font-size:11px">پیامک</div>
-    </button>
-    <button class="qa-item" style="flex:1;padding:10px 4px" onclick="nav(2,document.querySelectorAll('.nb')[2])">
-      <div class="qa-ic" style="background:var(--aml);width:38px;height:38px;border-radius:12px"><svg viewBox="0 0 24 24" style="stroke:var(--am)"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg></div>
-      <div class="qa-lb" style="font-size:11px">اجاره</div>
-    </button>
-    <button class="qa-item" style="flex:1;padding:10px 4px" onclick="nav(3,document.querySelectorAll('.nb')[3])">
-      <div class="qa-ic" style="background:var(--ppl);width:38px;height:38px;border-radius:12px"><svg viewBox="0 0 24 24" style="stroke:var(--pp)"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
-      <div class="qa-lb" style="font-size:11px">گزارش</div>
+    <button onclick="openSms()" style="flex:1;padding:16px 12px;border-radius:18px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;
+      background:linear-gradient(160deg,#2E83DE 0%,#0B3880 100%);
+      box-shadow:0 6px 0 #082C65,0 8px 16px rgba(11,56,128,0.35);
+      color:#fff;display:flex;flex-direction:column;align-items:center;gap:8px;
+      transition:transform .1s,box-shadow .1s"
+      onpointerdown="this.style.transform='translateY(3px)';this.style.boxShadow='0 3px 0 #082C65,0 4px 8px rgba(11,56,128,0.3)'"
+      onpointerup="this.style.transform='';this.style.boxShadow='0 6px 0 #082C65,0 8px 16px rgba(11,56,128,0.35)'"
+      onpointercancel="this.style.transform='';this.style.boxShadow='0 6px 0 #082C65,0 8px 16px rgba(11,56,128,0.35)'">
+      <span style="width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </span>
+      <span style="font-size:14px;font-weight:800;letter-spacing:.3px">پیامک بانک</span>
     </button>
   </div>
 
@@ -314,14 +323,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     <div class="hdr-top">
       <button class="hdr-btn" onclick="openSms()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>پیامک</button>
       <h1>تراکنش‌ها</h1>
-      <div class="month-picker-wrap">
-        <div class="month-pill" onclick="togglePicker('mp1')" aria-label="انتخاب ماه">
-          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-          <span class="month-pill-lbl" id="mn1">فروردین</span>
-          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="month-picker-dropdown" id="mp1"></div>
-      </div>
+      <div style="width:36px;flex-shrink:0"></div>
     </div>
   </div>
   <!-- Filter bar -->
@@ -379,16 +381,8 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   <div class="stt-sec">
     <div class="stt-sec-lbl">اطلاعات برنامه</div>
     <div class="stt-list">
-      <div class="stt-row" onclick="editAppName()">
-        <div class="stt-ic" style="background:var(--prl)"><svg viewBox="0 0 24 24" style="stroke:var(--pr)"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-        <div class="stt-info"><strong>نام برنامه</strong><span id="app-name-display">سرمایه</span></div>
-        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
-      </div>
-      <div class="stt-row" onclick="openRecurring()">
-        <div class="stt-ic" style="background:var(--ppl)"><svg viewBox="0 0 24 24" style="stroke:var(--pp)"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg></div>
-        <div class="stt-info"><strong>تراکنش‌های تکراری</strong><span id="rec-count">۰ مورد فعال</span></div>
-        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
-      </div>
+
+
       <div class="stt-row" onclick="openNotifSettings()">
         <div class="stt-ic" style="background:var(--aml)"><svg viewBox="0 0 24 24" style="stroke:var(--am)"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
         <div class="stt-info"><strong>اعلان‌ها و یادآور</strong><span>تنظیم یادآور اجاره</span></div>
@@ -445,12 +439,12 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     <div class="stt-list">
       <div class="stt-row">
         <div class="stt-ic" style="background:var(--prl)"><svg viewBox="0 0 24 24" style="stroke:var(--pr)"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 12v4"/></svg></div>
-        <div class="stt-info"><strong>نسخه برنامه</strong><span>سرمایه v2.0</span></div>
+        <div class="stt-info"><strong>نسخه برنامه</strong><span>سرمایه v3.0</span></div>
         <span class="stt-badge">جدید</span>
       </div>
       <div class="stt-row">
         <div class="stt-ic" style="background:var(--grl)"><svg viewBox="0 0 24 24" style="stroke:var(--gr)"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
-        <div class="stt-info"><strong>توسعه‌دهنده</strong><span>Ahmad Rezazadeh</span></div>
+        <div class="stt-info"><strong>سازنده</strong><span>Ahmad Rezazadeh</span></div>
       </div>
     </div>
   </div>
@@ -757,10 +751,13 @@ function def(){
         {id:'s5',n:'سایر درآمدها',i:'coin',c:'#534AB7'}
       ],
       expense:[
-        {id:'e1',n:'مسکن و آب‌وبرق',i:'zap',c:'#854F0B'},
-        {id:'e2',n:'خوراک و خرید',i:'cart',c:'#A32D2D'},
+        {id:'e1',n:'مسکن، آب و برق',i:'zap',c:'#854F0B'},
+        {id:'e2',n:'سوپرمارکت و میوه',i:'cart',c:'#A32D2D'},
         {id:'e3',n:'سلامت و ورزش',i:'health',c:'#993556'},
-        {id:'e4',n:'پس‌انداز',i:'piggy',c:'#1865C2'}
+        {id:'e4',n:'باغ و باغچه',i:'home',c:'#3B6D11'},
+        {id:'e5',n:'خودرو',i:'car',c:'#534AB7'},
+        {id:'e6',n:'پس\u200cانداز',i:'piggy',c:'#1865C2'},
+        {id:'e7',n:'متفرقه',i:'more',c:'#65728C'}
       ]
     },
     recurring:[]
@@ -899,14 +896,6 @@ function rDash(){
   db.textContent=(b<0?'-':'')+nf(Math.abs(b))+' تومان';
   db.style.color=b>=0?'var(--gr)':'var(--rd)';
   rDonut(txs,e);
-  const depTotal=(ST.ten||[]).filter(x=>x.depReceived&&!x.depReturned).reduce((s,x)=>s+(x.dep||0),0);
-  const depcard=document.getElementById('depcard');
-  if(depTotal>0){
-    depcard.style.display='flex';
-    document.getElementById('depTotal').textContent=nf(depTotal)+' تومان';
-  } else {
-    depcard.style.display='none';
-  }
   const rc=document.getElementById('rtx');
   const last=[...txs].reverse().slice(0,3);
   rc.innerHTML=last.length?last.map(txHtml).join(''):emptyHtml('bag','تراکنشی ثبت نشده');
@@ -983,12 +972,11 @@ function sortByDate(txs){
   });
 }
 function rTx(){
-  updateMonthLabel();
-  let txs=sortByDate(getTx(SM));
+  let txs=sortByDate([...ST.tx]); // ALL transactions, no month filter
   if(txFilter==='income') txs=txs.filter(t=>t.tp==='income');
   else if(txFilter==='expense') txs=txs.filter(t=>t.tp==='expense');
   const c=document.getElementById('txl');
-  c.innerHTML=txs.length?txs.map(txHtml).join(''):emptyHtml('bag','تراکنشی یافت نشد');
+  c.innerHTML=txs.length?txs.map(txHtml).join(''):emptyHtml('bag','هنوز تراکنشی ثبت نشده');
 }
 function fillMon(id,sel){document.getElementById(id).innerHTML=MFA.map((m,i)=>`<option value="${i}"${i===sel?' selected':''}>${m}</option>`).join('');}
 function fillCat(id,tp){
@@ -1512,7 +1500,7 @@ function rRep(){
   document.getElementById('bch').innerHTML=MFA.map((_,i)=>{
     const{i:inc,e:exp}=totals(getTx(i));
     const hi=Math.round((inc/maxV)*102),he=Math.round((exp/maxV)*102);
-    return `<div class="bg2"><div class="bc2"><div class="bar" style="height:${hi}px;background:var(--gr)"></div><div class="bar" style="height:${he}px;background:var(--rd)"></div></div><div class="blb">${MFA[i].slice(0,3)}</div></div>`;
+    return `<div class="bg2"><div class="bc2"><div class="bar" style="height:${hi}px;background:var(--gr)"></div><div class="bar" style="height:${he}px;background:var(--rd)"></div></div><div class="blb" style="writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);font-size:9px;height:36px;line-height:1">${MFA[i]}</div></div>`;
   }).join('');
   let ai=0,ae=0;
   MFA.forEach((_,i)=>{const{i:inc,e:exp}=totals(getTx(i));ai+=inc;ae+=exp;});
@@ -1684,9 +1672,7 @@ function openNotifPanel(){
         ${!n.read?`<button onclick="markNotifRead('${n.id}')" style="background:var(--prl);border:none;border-radius:8px;padding:5px 8px;font-size:11px;color:var(--pr);cursor:pointer;font-family:'Vazirmatn',sans-serif">خواندم</button>`:''}
       </div>`).join('');
   }
-  // Mark all as read
-  (ST.notifLog||[]).forEach(n=>n.read=true);
-  sv();
+  // Do NOT mark all as read on open — only markNotifRead() does that
   chkNotifBadge();
   document.getElementById('notifpanel').classList.add('on');
 }
@@ -1864,8 +1850,11 @@ async function init(){
   // Schedule daily notification check
   setTimeout(chkDue, 2000);
   setTimeout(chkRecurring, 3000);
-  // Also check every hour while app is open
   setInterval(chkDue, 3600000);
+  // Auto-request notification permission on first launch
+  if('Notification' in window && Notification.permission==='default'){
+    setTimeout(()=>Notification.requestPermission(), 1500);
+  }
 }
 
 init();
