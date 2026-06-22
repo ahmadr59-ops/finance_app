@@ -241,7 +241,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     </div>
   </div>
 
-  <!-- Dashboard: compact no-scroll layout -->
+  <!-- Dashboard: compact layout -->
   <div style="padding:10px 14px 0;display:flex;align-items:center;gap:8px">
     <div style="flex:1;background:var(--card);border-radius:var(--rads);box-shadow:var(--sh);padding:10px 14px">
       <div style="font-size:11px;color:var(--t3);font-weight:600">امروز</div>
@@ -255,45 +255,20 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   </div>
   <div class="bal-card" style="margin:8px 14px 0"><span class="lb">مانده ماه</span><span class="vl" id="db">۰ تومان</span></div>
 
-  <!-- Quick access: 2 main action buttons - professional 3D style -->
-  <div style="display:flex;gap:12px;padding:12px 14px 0">
-    <button onclick="openTx()" style="flex:1;padding:16px 12px;border-radius:18px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;
-      background:linear-gradient(160deg,#34C759 0%,#1E8C3A 100%);
-      box-shadow:0 6px 0 #156B2B,0 8px 16px rgba(30,140,58,0.35);
-      color:#fff;display:flex;flex-direction:column;align-items:center;gap:8px;
-      active:transform:translateY(3px);transition:transform .1s,box-shadow .1s"
-      onpointerdown="this.style.transform='translateY(3px)';this.style.boxShadow='0 3px 0 #156B2B,0 4px 8px rgba(30,140,58,0.3)'"
-      onpointerup="this.style.transform='';this.style.boxShadow='0 6px 0 #156B2B,0 8px 16px rgba(30,140,58,0.35)'"
-      onpointercancel="this.style.transform='';this.style.boxShadow='0 6px 0 #156B2B,0 8px 16px rgba(30,140,58,0.35)'">
-      <span style="width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
+  <!-- Quick access: flat action cards -->
+  <div style="display:flex;gap:10px;padding:12px 14px 0">
+    <button onclick="openTx()" style="flex:1;padding:14px 10px;border-radius:16px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:var(--sh);transition:opacity .15s" onpointerdown="this.style.opacity='.75'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
+      <span style="width:44px;height:44px;border-radius:14px;background:var(--grl);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:var(--gr);stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
       </span>
-      <span style="font-size:14px;font-weight:800;letter-spacing:.3px">تراکنش جدید</span>
+      <span style="font-size:13px;font-weight:700;color:var(--t1)">تراکنش جدید</span>
     </button>
-    <button onclick="openSms()" style="flex:1;padding:16px 12px;border-radius:18px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;
-      background:linear-gradient(160deg,#2E83DE 0%,#0B3880 100%);
-      box-shadow:0 6px 0 #082C65,0 8px 16px rgba(11,56,128,0.35);
-      color:#fff;display:flex;flex-direction:column;align-items:center;gap:8px;
-      transition:transform .1s,box-shadow .1s"
-      onpointerdown="this.style.transform='translateY(3px)';this.style.boxShadow='0 3px 0 #082C65,0 4px 8px rgba(11,56,128,0.3)'"
-      onpointerup="this.style.transform='';this.style.boxShadow='0 6px 0 #082C65,0 8px 16px rgba(11,56,128,0.35)'"
-      onpointercancel="this.style.transform='';this.style.boxShadow='0 6px 0 #082C65,0 8px 16px rgba(11,56,128,0.35)'">
-      <span style="width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <button onclick="openSms()" style="flex:1;padding:14px 10px;border-radius:16px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:var(--sh);transition:opacity .15s" onpointerdown="this.style.opacity='.75'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
+      <span style="width:44px;height:44px;border-radius:14px;background:var(--prl);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:var(--pr);stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       </span>
-      <span style="font-size:14px;font-weight:800;letter-spacing:.3px">پیامک بانک</span>
+      <span style="font-size:13px;font-weight:700;color:var(--t1)">پیامک بانک</span>
     </button>
-  </div>
-
-  <!-- Donut + Recent combined card -->
-  <div class="card" style="margin:10px 14px 0;padding:12px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <span style="font-size:13px;font-weight:700">توزیع هزینه‌ها</span>
-    </div>
-    <div class="dw" style="gap:10px">
-      <svg id="dsv" width="90" height="90" viewBox="0 0 110 110" style="flex-shrink:0"></svg>
-      <div class="dleg" id="dleg" style="flex:1;min-width:0"></div>
-    </div>
   </div>
 
   <div style="padding:10px 14px 4px;font-size:13px;font-weight:700;color:var(--t2)">آخرین تراکنش‌ها</div>
@@ -337,6 +312,13 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 <!-- SCREEN 3: Reports -->
 <div class="scr" id="s3">
   <div class="hdr"><div class="hdr-top"><div style="width:36px;flex-shrink:0"></div><h1>گزارش‌ها</h1><div style="width:36px;flex-shrink:0"></div></div></div>
+  <div class="card">
+    <div class="card-t">توزیع هزینه‌های ماه جاری</div>
+    <div class="dw" style="gap:10px">
+      <svg id="dsv" width="90" height="90" viewBox="0 0 110 110" style="flex-shrink:0"></svg>
+      <div class="dleg" id="dleg" style="flex:1;min-width:0"></div>
+    </div>
+  </div>
   <div class="card">
     <div class="card-t">مقایسه ۱۲ ماه</div>
     <div class="bc" id="bch"></div>
@@ -856,7 +838,7 @@ function nav(idx,btn){
   if(btn)btn.classList.add('on');
   else document.querySelectorAll('.nb')[idx].classList.add('on');
   closePickers();
-  document.getElementById('fab').style.display=(idx===1)?'flex':'none';
+  document.getElementById('fab').style.display=(idx===0||idx===4)?'none':'flex';
   if(idx===0)rDash();
   if(idx===1)rTx();
   if(idx===2)rTen();
@@ -878,7 +860,6 @@ function rDash(){
   const db=document.getElementById('db');
   db.textContent=(b<0?'-':'')+nf(Math.abs(b))+' تومان';
   db.style.color=b>=0?'var(--gr)':'var(--rd)';
-  rDonut(txs,e);
   const rc=document.getElementById('rtx');
   const last=[...txs].reverse().slice(0,3);
   rc.innerHTML=last.length?last.map(txHtml).join(''):emptyHtml('bag','تراکنشی ثبت نشده');
@@ -897,6 +878,7 @@ function rDonut(txs,total){
   txs.filter(t=>t.tp==='expense').forEach(t=>{cats[t.cat]=(cats[t.cat]||0)+t.a;});
   const ents=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
   const svg=document.getElementById('dsv'),leg=document.getElementById('dleg');
+  if(!svg||!leg) return;
   svg.innerHTML='';leg.innerHTML='';
   if(!total||!ents.length){
     svg.innerHTML='<circle cx="55" cy="55" r="40" fill="none" stroke="#EEF1F6" stroke-width="20"/><text x="55" y="59" text-anchor="middle" font-size="9" fill="#9CA6B8">بدون داده</text>';
@@ -1506,6 +1488,8 @@ async function clearPay(tid,y,m){
 // REPORTS
 // ============================================================
 function rRep(){
+  const curTxs=getTx(SM);const{e:curExp}=totals(curTxs);
+  rDonut(curTxs,curExp);
   const maxV=Math.max(...MFA.map((_,i)=>{const{i:inc,e:exp}=totals(getTx(i));return Math.max(inc,exp,1);}));
   document.getElementById('bch').innerHTML=MFA.map((_,i)=>{
     const{i:inc,e:exp}=totals(getTx(i));
