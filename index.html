@@ -241,45 +241,78 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     </div>
   </div>
 
-  <!-- Dashboard: compact layout -->
-  <div style="padding:10px 14px 0;display:flex;align-items:center;gap:8px">
-    <div style="flex:1;background:var(--card);border-radius:var(--rads);box-shadow:var(--sh);padding:10px 14px">
-      <div style="font-size:11px;color:var(--t3);font-weight:600">امروز</div>
-      <div style="font-size:13px;font-weight:700;margin-top:2px" id="td"></div>
+  <!-- Dashboard: unified professional layout -->
+
+  <!-- Date strip -->
+  <div style="padding:12px 14px 0">
+    <div style="background:var(--card);border-radius:var(--rads);box-shadow:var(--sh);padding:11px 16px;display:flex;align-items:center;gap:10px">
+      <span style="width:36px;height:36px;border-radius:11px;background:linear-gradient(145deg,#4A90D9,#1456A8);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      </span>
+      <div id="td" style="font-size:13px;font-weight:700;color:var(--t1)"></div>
     </div>
   </div>
 
-  <div class="sgrid" style="padding:10px 14px 0">
-    <div class="sc inc"><div class="lb">درآمد</div><div class="vl" id="di">۰</div><div class="ut">تومان</div></div>
-    <div class="sc exp"><div class="lb">هزینه</div><div class="vl" id="de">۰</div><div class="ut">تومان</div></div>
+  <!-- Income / Expense gradient cards -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 14px 0">
+    <div style="background:linear-gradient(145deg,#1A8A4A,#0F5C32);border-radius:18px;padding:16px;box-shadow:0 6px 20px rgba(26,138,74,0.3);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-18px;right:-18px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:#fff;stroke-width:2.5;fill:none;stroke-linecap:round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        </span>
+        <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.85)">درآمد ماه</span>
+      </div>
+      <div id="di" style="font-size:20px;font-weight:800;color:#fff;line-height:1">۰</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px;font-weight:600">تومان</div>
+    </div>
+    <div style="background:linear-gradient(145deg,#C0392B,#7B1515);border-radius:18px;padding:16px;box-shadow:0 6px 20px rgba(192,57,43,0.3);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-18px;right:-18px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:#fff;stroke-width:2.5;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </span>
+        <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.85)">هزینه ماه</span>
+      </div>
+      <div id="de" style="font-size:20px;font-weight:800;color:#fff;line-height:1">۰</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px;font-weight:600">تومان</div>
+    </div>
   </div>
-  <div class="bal-card" style="margin:8px 14px 0"><span class="lb">مانده ماه</span><span class="vl" id="db">۰ تومان</span></div>
 
-  <!-- Quick access: flat action cards -->
-  <div style="display:flex;gap:10px;padding:12px 14px 0">
-    <button onclick="openTx()" style="flex:1;padding:14px 10px;border-radius:16px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:var(--sh);transition:opacity .15s" onpointerdown="this.style.opacity='.75'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
-      <span style="width:44px;height:44px;border-radius:14px;background:var(--grl);display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:var(--gr);stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
+  <!-- Action buttons: 3D professional -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 14px 0">
+    <button onclick="openTx()" style="padding:16px 10px;border-radius:18px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;background:linear-gradient(160deg,#2E83DE 0%,#0D4DB5 100%);box-shadow:0 6px 0 #082C65,0 8px 18px rgba(13,77,181,0.35);color:#fff;display:flex;flex-direction:column;align-items:center;gap:9px;transition:transform .1s,box-shadow .1s"
+      onpointerdown="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #082C65,0 4px 8px rgba(13,77,181,0.25)'"
+      onpointerup="this.style.transform='';this.style.boxShadow='0 6px 0 #082C65,0 8px 18px rgba(13,77,181,0.35)'"
+      onpointercancel="this.style.transform='';this.style.boxShadow='0 6px 0 #082C65,0 8px 18px rgba(13,77,181,0.35)'">
+      <span style="width:48px;height:48px;border-radius:15px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
       </span>
-      <span style="font-size:13px;font-weight:700;color:var(--t1)">تراکنش جدید</span>
+      <span style="font-size:13.5px;font-weight:800;letter-spacing:.2px">تراکنش جدید</span>
     </button>
-    <button onclick="openSms()" style="flex:1;padding:14px 10px;border-radius:16px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;font-family:'Vazirmatn',sans-serif;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:var(--sh);transition:opacity .15s" onpointerdown="this.style.opacity='.75'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
-      <span style="width:44px;height:44px;border-radius:14px;background:var(--prl);display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:var(--pr);stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <button onclick="openSms()" style="padding:16px 10px;border-radius:18px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;background:linear-gradient(160deg,#5B8DB8 0%,#2E5F8A 100%);box-shadow:0 6px 0 #1C3D5C,0 8px 18px rgba(46,95,138,0.35);color:#fff;display:flex;flex-direction:column;align-items:center;gap:9px;transition:transform .1s,box-shadow .1s"
+      onpointerdown="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #1C3D5C,0 4px 8px rgba(46,95,138,0.25)'"
+      onpointerup="this.style.transform='';this.style.boxShadow='0 6px 0 #1C3D5C,0 8px 18px rgba(46,95,138,0.35)'"
+      onpointercancel="this.style.transform='';this.style.boxShadow='0 6px 0 #1C3D5C,0 8px 18px rgba(46,95,138,0.35)'">
+      <span style="width:48px;height:48px;border-radius:15px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       </span>
-      <span style="font-size:13px;font-weight:700;color:var(--t1)">پیامک بانک</span>
+      <span style="font-size:13.5px;font-weight:800;letter-spacing:.2px">پیامک بانک</span>
     </button>
   </div>
 
-  <div style="padding:10px 14px 4px;font-size:13px;font-weight:700;color:var(--t2)">آخرین تراکنش‌ها</div>
+  <!-- Last 3 transactions -->
+  <div style="padding:12px 14px 4px;display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:14px;font-weight:800;color:var(--t1)">آخرین تراکنش‌ها</span>
+    <button onclick="nav(1,document.querySelectorAll('.nb')[1])" style="background:none;border:none;font-size:12.5px;font-weight:700;color:var(--pr);cursor:pointer;font-family:'Vazirmatn',sans-serif">مشاهده همه ←</button>
+  </div>
   <div class="card" style="margin:0 14px;padding:4px 14px"><div id="rtx"></div></div>
-</div>
 
 <!-- SCREEN 1: Transactions -->
 <div class="scr" id="s1">
   <div class="hdr">
     <div class="hdr-top">
-      <button class="hdr-btn" onclick="openSms()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>پیامک</button>
+      <div style="width:36px;flex-shrink:0"></div>
       <h1>تراکنش‌ها</h1>
       <div style="width:36px;flex-shrink:0"></div>
     </div>
@@ -373,6 +406,26 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   </div>
 
   <div class="stt-sec" style="margin-top:14px">
+    <div class="stt-sec-lbl">حساب‌های بانکی</div>
+    <div class="stt-list">
+      <div class="stt-row" onclick="openAccList()">
+        <div class="stt-ic" style="background:linear-gradient(145deg,#4A90D9,#1456A8)">
+          <svg viewBox="0 0 24 24" style="stroke:#fff"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+        </div>
+        <div class="stt-info"><strong>مدیریت حساب‌ها</strong><span id="acc-count-display">۰ حساب ثبت شده</span></div>
+        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+      </div>
+      <div class="stt-row" onclick="openTransfer()">
+        <div class="stt-ic" style="background:linear-gradient(145deg,#6C8EBF,#3A5A8A)">
+          <svg viewBox="0 0 24 24" style="stroke:#fff"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg>
+        </div>
+        <div class="stt-info"><strong>انتقال بین حساب‌ها</strong><span>جابجایی وجه</span></div>
+        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stt-sec" style="margin-top:14px">
     <div class="stt-sec-lbl">داده‌ها</div>
     <div class="stt-list">
       <div class="stt-row" onclick="backup()">
@@ -452,6 +505,12 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   <div class="fg"><label>دسته‌بندی</label><select id="tcat"></select></div>
   <div class="fg"><label>مبلغ (تومان)</label><input type="number" id="tamt" inputmode="numeric" placeholder="مثال: 5000000"></div>
   <div class="fg"><label>توضیحات</label><input type="text" id="tdsc" placeholder="اختیاری"></div>
+  <div class="fg" id="acc-select-wrap">
+    <label>حساب بانکی (اختیاری)</label>
+    <select id="tacc">
+      <option value="">انتخاب نشده</option>
+    </select>
+  </div>
   <div class="dategrid">
     <div class="fg"><label>روز</label><input type="number" id="tday" min="1" max="31" inputmode="numeric"></div>
     <div class="fg"><label>ماه</label><select id="tmon"></select></div>
@@ -602,6 +661,96 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
 </div>
 </div>
 
+<!-- MODAL: Accounts list -->
+<div class="ov" id="acclist">
+<div class="mdl">
+  <div class="mh"></div>
+  <h2>حساب‌های بانکی</h2>
+  <div id="acc-list-content" style="margin-bottom:14px"></div>
+  <button class="btn btnp" onclick="openAccForm(null)">➕ افزودن حساب جدید</button>
+  <button class="btn btns" onclick="cls('acclist')" style="margin-top:8px">بستن</button>
+</div>
+</div>
+
+<!-- MODAL: Add/Edit Account -->
+<div class="ov" id="accm">
+<div class="mdl">
+  <div class="mh"></div>
+  <h2 id="accmt">حساب جدید</h2>
+  <div class="fg">
+    <label>نام بانک</label>
+    <select id="acc-bank" style="width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:14px;font-size:15px;font-family:'Vazirmatn',sans-serif;background:#FAFBFD;-webkit-appearance:none">
+      <option value="بانک ملی">بانک ملی</option>
+      <option value="بانک تجارت">بانک تجارت</option>
+      <option value="بانک شهر">بانک شهر</option>
+      <option value="بانک ملت">بانک ملت</option>
+      <option value="بانک صادرات">بانک صادرات</option>
+      <option value="بانک سپه">بانک سپه</option>
+      <option value="بانک پارسیان">بانک پارسیان</option>
+      <option value="بانک سامان">بانک سامان</option>
+      <option value="بانک پاسارگاد">بانک پاسارگاد</option>
+      <option value="بانک مسکن">بانک مسکن</option>
+      <option value="بانک رفاه">بانک رفاه</option>
+      <option value="سایر">سایر</option>
+    </select>
+  </div>
+  <div class="fg"><label>نام/عنوان حساب (اختیاری)</label><input type="text" id="acc-name" placeholder="مثال: حساب جاری، پس‌انداز"></div>
+  <div class="fg"><label>۴ رقم آخر کارت (اختیاری)</label><input type="number" id="acc-last4" inputmode="numeric" maxlength="4" placeholder="مثال: 1234"></div>
+  <div class="fg">
+    <label>رنگ کارت</label>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button type="button" onclick="pickAccColor('#1456A8')" id="acol-0" style="width:36px;height:36px;border-radius:50%;background:#1456A8;border:3px solid #1456A8;cursor:pointer"></button>
+      <button type="button" onclick="pickAccColor('#1A8A4A')" id="acol-1" style="width:36px;height:36px;border-radius:50%;background:#1A8A4A;border:3px solid transparent;cursor:pointer"></button>
+      <button type="button" onclick="pickAccColor('#C0392B')" id="acol-2" style="width:36px;height:36px;border-radius:50%;background:#C0392B;border:3px solid transparent;cursor:pointer"></button>
+      <button type="button" onclick="pickAccColor('#7B1515')" id="acol-3" style="width:36px;height:36px;border-radius:50%;background:#7B1515;border:3px solid transparent;cursor:pointer"></button>
+      <button type="button" onclick="pickAccColor('#4A42B0')" id="acol-4" style="width:36px;height:36px;border-radius:50%;background:#4A42B0;border:3px solid transparent;cursor:pointer"></button>
+      <button type="button" onclick="pickAccColor('#B5600A')" id="acol-5" style="width:36px;height:36px;border-radius:50%;background:#B5600A;border:3px solid transparent;cursor:pointer"></button>
+    </div>
+    <input type="hidden" id="acc-color" value="#1456A8">
+  </div>
+  <div class="fg"><label>موجودی اولیه (تومان)</label><input type="number" id="acc-init" inputmode="numeric" placeholder="۰"></div>
+  <button class="btn btnp" onclick="saveAcc()">ذخیره</button>
+  <button class="btn btns" onclick="cls('accm')">انصراف</button>
+  <button class="btn btnd" id="daccb" style="display:none" onclick="delAcc()">
+    <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>حذف حساب
+  </button>
+</div>
+</div>
+
+<!-- MODAL: Transfer between accounts -->
+<div class="ov" id="transm">
+<div class="mdl">
+  <div class="mh"></div>
+  <h2>انتقال بین حساب‌ها</h2>
+  <div class="fg"><label>از حساب</label><select id="trans-from"></select></div>
+  <div style="text-align:center;margin:-6px 0 8px;color:var(--t3)">
+    <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+  <div class="fg"><label>به حساب</label><select id="trans-to"></select></div>
+  <div class="fg"><label>مبلغ (تومان)</label><input type="number" id="trans-amt" inputmode="numeric" placeholder="مبلغ انتقال"></div>
+  <div class="fg"><label>توضیحات (اختیاری)</label><input type="text" id="trans-dsc" placeholder="مثال: انتقال برای خرید"></div>
+  <button class="btn btnp" onclick="doTransfer()">
+    <svg viewBox="0 0 24 24"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg>ثبت انتقال
+  </button>
+  <button class="btn btns" onclick="cls('transm')">انصراف</button>
+</div>
+</div>
+
+<!-- MODAL: Balance update from SMS -->
+<div class="ov" id="balupdate">
+<div class="mdl">
+  <div class="mh"></div>
+  <h2>بروزرسانی موجودی</h2>
+  <div style="background:var(--prl);border-radius:14px;padding:14px;margin-bottom:14px;font-size:13.5px;line-height:1.8;color:var(--pr)">
+    موجودی زیر از پیامک تشخیص داده شد. می‌توانید آن را به یکی از حساب‌هایتان اعمال کنید.
+  </div>
+  <div style="font-size:18px;font-weight:800;text-align:center;margin-bottom:16px;color:var(--t1)" id="balupdate-amt"></div>
+  <div class="fg"><label>انتخاب حساب</label><select id="balupdate-acc"></select></div>
+  <button class="btn btnp" onclick="applyBalanceUpdate()">✅ اعمال موجودی</button>
+  <button class="btn btns" onclick="cls('balupdate')">انصراف</button>
+</div>
+</div>
+
 <div class="ntf" id="ntf"></div>
 
 <!-- MODAL: Recurring reminder detail -->
@@ -725,7 +874,8 @@ function def(){
         {id:'e7',n:'متفرقه',i:'more',c:'#65728C'}
       ]
     },
-    recurring:[]
+    recurring:[],
+    accounts:[]
   };
 }
 
@@ -857,11 +1007,8 @@ function rDash(){
   const txs=getTx(SM);const{i,e,b}=totals(txs);
   document.getElementById('di').textContent=nf(i);
   document.getElementById('de').textContent=nf(e);
-  const db=document.getElementById('db');
-  db.textContent=(b<0?'-':'')+nf(Math.abs(b))+' تومان';
-  db.style.color=b>=0?'var(--gr)':'var(--rd)';
   const rc=document.getElementById('rtx');
-  const last=[...txs].reverse().slice(0,3);
+  const last=sortByDate([...ST.tx]).slice(0,3);
   rc.innerHTML=last.length?last.map(txHtml).join(''):emptyHtml('bag','تراکنشی ثبت نشده');
   const isIos=/iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone=window.navigator.standalone;
@@ -986,6 +1133,8 @@ function openTx(){
   const t=today();
   document.getElementById('tday').value=t.d;document.getElementById('tyr').value=t.y;
   fillMon('tmon',t.m-1);styp('income');
+  fillAccSelects();
+  document.getElementById('tacc').value='';
   document.getElementById('txm').classList.add('on');
 }
 function edTx(id){
@@ -996,6 +1145,8 @@ function edTx(id){
   document.getElementById('tday').value=t.day;document.getElementById('tyr').value=t.y||1404;
   fillMon('tmon',t.m);styp(t.tp);
   setTimeout(()=>document.getElementById('tcat').value=t.cat,30);
+  fillAccSelects();
+  setTimeout(()=>{if(t.accId)document.getElementById('tacc').value=t.accId;},30);
   document.getElementById('dtxb').style.display='block';
   document.getElementById('txm').classList.add('on');
 }
@@ -1014,7 +1165,8 @@ async function saveTx(){
   const y=parseInt(document.getElementById('tyr').value)||1404;
   if(!a){ntf('⚠️ مبلغ الزامی است');return;}
   if(!cat||cat===''){ntf('⚠️ دسته‌بندی را انتخاب کنید');return;}
-  const rec={id:etx||uid(),tp:txtp,cat,a,dsc,day,m,y};
+  const accId=document.getElementById('tacc')?.value||'';
+  const rec={id:etx||uid(),tp:txtp,cat,a,dsc,day,m,y,accId};
   if(etx){const idx=ST.tx.findIndex(t=>t.id===etx);if(idx>=0)ST.tx[idx]=rec;else ST.tx.push(rec);}
   else ST.tx.push(rec);
   cls('txm');ntf('✅ ذخیره شد');
@@ -1038,135 +1190,123 @@ function parseSms(){
   const raw=document.getElementById('smst').value;
   if(!raw.trim()){ntf('⚠️ متن پیامک را وارد کنید');return;}
 
-  // Normalize Persian/Arabic digits to Latin
   const txt=raw
     .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
     .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 
   let amount=0, inRial=false, bankName='';
+  let jDay=0, jMon=-1, jYear=0;
+  let balance=0, balInRial=false;
 
-  // ---- BANK MELLI (بانک ملی) ----
-  // Format: كارت: 7489 / خريد: 16,950,000 / خريدمانده: 112,045,677
-  const melliPurchase=/(?:خريد|خرید)\s*:\s*([\d,،٬]+)(?!\s*مانده)/i.exec(txt);
-  const melliBalance=/(?:خريدمانده|خريد\s*مانده|مانده)\s*:\s*([\d,،٬]+)/i.exec(txt);
-  if(melliPurchase && melliBalance){
-    const purchaseAmt=parseFloat(melliPurchase[1].replace(/[,،٬]/g,''))||0;
-    if(purchaseAmt>0){
-      amount=purchaseAmt;
-      inRial=false; // Bank Melli uses Rials implicitly but amounts are shown as Toman
-      bankName='بانک ملی';
-    }
+  // ---- AMOUNT DETECTION ----
+  // Bank Melli: برداشت:1,070,000- or خريد: 16,950,000
+  const melliWithdraw=/(?:^|[\s
+])برداشت\s*:\s*([\d,،٬]+)/im.exec(txt);
+  const melliPurchase=/(?:^|[\s
+])خريد\s*:\s*([\d,،٬]+)/im.exec(txt);
+  if(melliWithdraw){
+    amount=parseFloat(melliWithdraw[1].replace(/[,،٬]/g,''))||0;
+    inRial=false;bankName='بانک ملی';
+  } else if(melliPurchase){
+    amount=parseFloat(melliPurchase[1].replace(/[,،٬]/g,''))||0;
+    inRial=false;bankName='بانک ملی';
   }
-
-  // ---- BANK TEJARAT (بانک تجارت) ----
-  // Format: مبلغ: 3,400,000 ريال
+  // مبلغ: xxx ريال (Tejarat, Shahr, others)
   if(!amount){
-    const tejaratAmt=/مبلغ\s*:\s*([\d,،٬]+)\s*ريال/i.exec(txt);
-    if(tejaratAmt){
-      amount=parseFloat(tejaratAmt[1].replace(/[,،٬]/g,''))||0;
-      inRial=true;
-      bankName='بانک تجارت';
-    }
+    const m=/مبلغ\s*:?\s*([\d,،٬]+)\s*ريال/i.exec(txt);
+    if(m){amount=parseFloat(m[1].replace(/[,،٬]/g,''))||0;inRial=true;}
   }
-
-  // ---- BANK SHAHR (بانک شهر) ----
-  // Format: مبلغ:4,000,000ريال / موجودي:5,000,000ريال
   if(!amount){
-    const shahrAmt=/مبلغ\s*:\s*([\d,،٬]+)\s*ريال/i.exec(txt);
-    if(shahrAmt){
-      amount=parseFloat(shahrAmt[1].replace(/[,،٬]/g,''))||0;
-      inRial=true;
-      bankName='بانک شهر';
-    }
+    const m=/مبلغ\s*:?\s*([\d,،٬]+)\s*تومان/i.exec(txt);
+    if(m){amount=parseFloat(m[1].replace(/[,،٬]/g,''))||0;inRial=false;}
   }
-
-  // ---- GENERIC PATTERNS (fallback for other banks) ----
   if(!amount){
-    const patterns=[
-      {re:/مبلغ\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true},
-      {re:/مبلغ\s*:?\s*([\d,،٬\s]+)\s*تومان/i, rial:false},
-      {re:/برداشت\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true},
-      {re:/واريز\s*:?\s*([\d,،٬\s]+)\s*ريال/i, rial:true},
-      {re:/واريز\s*:?\s*([\d,،٬\s]+)\s*تومان/i, rial:false},
-      {re:/مبلغ\s*انتقال\s*:?\s*([\d,،٬\s]+)/i, rial:true},
-      // Generic: number followed by ریال (avoid card/account numbers by requiring comma or 7+ digits)
-      {re:/([\d]{1,3}(?:[,،٬]\d{3})+)\s*ريال/i, rial:true},
-      {re:/([\d]{1,3}(?:[,،٬]\d{3})+)\s*تومان/i, rial:false},
-    ];
-    for(const {re,rial} of patterns){
-      const m=txt.match(re);
-      if(m){
-        const v=parseFloat(m[1].replace(/[,،٬\s]/g,''))||0;
-        if(v>0 && v<100000000000){
-          amount=v;
-          inRial=rial;
-          break;
-        }
+    const m=/([\d]{1,3}(?:[,،٬]\d{3})+)\s*ريال/i.exec(txt);
+    if(m){const v=parseFloat(m[1].replace(/[,،٬]/g,''))||0;if(v<100000000000){amount=v;inRial=true;}}
+  }
+  if(inRial&&amount>0) amount=Math.round(amount/10);
+
+  // ---- BALANCE DETECTION ----
+  // مانده: xxx  or  موجودي: xxx ريال
+  const balPatterns=[
+    /(?:مانده|موجودي|موجودی)\s*:\s*([\d,،٬]+)\s*ريال/i,
+    /(?:مانده|موجودي|موجودی)\s*:\s*([\d,،٬]+)/i,
+    /خريدمانده\s*:\s*([\d,،٬]+)/i,
+  ];
+  for(const re of balPatterns){
+    const m=re.exec(txt);
+    if(m){
+      const v=parseFloat(m[1].replace(/[,،٬]/g,''))||0;
+      if(v>0){
+        balance=v;
+        balInRial=/ريال/i.test(m[0]);
+        break;
       }
     }
   }
-
-  // Convert Rial to Toman
-  if(inRial && amount>0) amount=Math.round(amount/10);
+  if(balInRial&&balance>0) balance=Math.round(balance/10);
 
   // ---- DATE DETECTION ----
-  // Looks for Jalali-style dates like 1404/03/15, 1404-03-15, or 15/03/1404
-  let det=today();
-  let dateFound=false;
-  let dm=/(?:تاریخ|تاريخ)\s*:?\s*(1[34]\d{2})[\/\-](\d{1,2})[\/\-](\d{1,2})/.exec(txt)
-      || /\b(1[34]\d{2})[\/\-](\d{1,2})[\/\-](\d{1,2})\b/.exec(txt);
-  if(dm){
-    const y=parseInt(dm[1]),m=parseInt(dm[2]),d=parseInt(dm[3]);
-    if(m>=1&&m<=12&&d>=1&&d<=31){det={y,m,d};dateFound=true;}
-  }
-  if(!dateFound){
-    dm=/(?:تاریخ|تاريخ)\s*:?\s*(\d{1,2})[\/\-](\d{1,2})[\/\-](1[34]\d{2})/.exec(txt)
-      || /\b(\d{1,2})[\/\-](\d{1,2})[\/\-](1[34]\d{2})\b/.exec(txt);
-    if(dm){
-      const d=parseInt(dm[1]),m=parseInt(dm[2]),y=parseInt(dm[3]);
-      if(m>=1&&m<=12&&d>=1&&d<=31){det={y,m,d};dateFound=true;}
-    }
-  }
+  const dateM=/1[34]\d{2}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12]\d|3[01])/.exec(txt);
+  if(dateM){
+    jYear=parseInt(dateM[0].split(/[\/\-]/)[0]);
+    jMon=parseInt(dateM[0].split(/[\/\-]/)[1])-1;
+    jDay=parseInt(dateM[0].split(/[\/\-]/)[2]);
+  } else {const t=today();jDay=t.d;jMon=t.m-1;jYear=t.y;}
 
-  // Build description
-  let desc='';
-  if(bankName) desc=bankName;
+  // ---- BANK NAME ----
+  if(!bankName){
+    if(/تجارت/i.test(raw)) bankName='بانک تجارت';
+    else if(/شهر/i.test(raw)) bankName='بانک شهر';
+    else if(/ملي|ملی/i.test(raw)) bankName='بانک ملی';
+    else if(/ملت/i.test(raw)) bankName='بانک ملت';
+    else if(/صادرات/i.test(raw)) bankName='بانک صادرات';
+    else if(/پارسيان|پارسیان/i.test(raw)) bankName='بانک پارسیان';
+    else if(/سامان/i.test(raw)) bankName='بانک سامان';
+    else if(/مسكن|مسکن/i.test(raw)) bankName='بانک مسکن';
+  }
 
   const res=document.getElementById('smsr');
   res.style.display='block';
-  document.getElementById('smsf').style.display='block';
-  fillMon('smon',det.m-1);
-  document.getElementById('sday').value=det.d;
-  document.getElementById('syr').value=det.y;
-  // No type pre-selection — user must choose income/expense themselves
-  smtp=null;
-  document.getElementById('sbi').className='tb';
-  document.getElementById('sbe').className='tb';
-  document.getElementById('scat').innerHTML='<option value="">ابتدا نوع را انتخاب کنید</option>';
+
+  let resultHtml='<div class="smsbox"><div class="smsd"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
+  resultHtml+=bankName?bankName+' — ':'';
+  resultHtml+='تشخیص پیامک</div>';
+
   if(amount>0){
-    res.innerHTML=`<div class="smsbox"><div class="smsd"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>تشخیص داده شد${bankName?' — '+bankName:''}</div>
-      مبلغ: <strong>${nf(amount)} تومان</strong><br>
-      تاریخ: <strong>${dateFound?'از پیامک ('+toFa(det.d)+' '+MFA[det.m-1]+' '+toFa(det.y)+')':'امروز'}</strong><br>
-      <span style="color:var(--t2)">نوع تراکنش و دسته‌بندی را خودتان مشخص کنید 👇</span></div>`;
-    document.getElementById('samt').value=amount;
-    document.getElementById('sdsc').value=desc;
+    resultHtml+=`مبلغ: <strong>${nf(amount)} تومان</strong>`;
+    if(jDay) resultHtml+=`<br>تاریخ: <strong>${toFa(jDay)} ${MFA[jMon]} ${toFa(jYear)}</strong>`;
   } else {
-    res.innerHTML='<div class="smsbox" style="background:var(--rdl);color:var(--rd)">مبلغی تشخیص داده نشد. لطفاً مبلغ را دستی وارد کنید.</div>';
+    resultHtml+='<span style="color:var(--rd)">⚠️ مبلغی تشخیص داده نشد</span>';
+  }
+
+  if(balance>0){
+    resultHtml+=`<br>موجودی حساب: <strong style="color:var(--pr)">${nf(balance)} تومان</strong>`;
+  }
+  resultHtml+='</div>';
+  res.innerHTML=resultHtml;
+
+  document.getElementById('smsf').style.display='block';
+  if(amount>0){
+    document.getElementById('samt').value=amount;
+  }
+  document.getElementById('sday').value=jDay||today().d;
+  fillMon('smon', jMon>=0?jMon:today().m-1);
+  document.getElementById('syr').value=jYear||today().y;
+  document.getElementById('sdsc').value=bankName||'';
+  sst('expense');
+
+  // If balance detected and accounts exist, offer to update
+  if(balance>0&&(ST.accounts||[]).length>0){
+    const balBtn=document.createElement('button');
+    balBtn.className='btn btns';
+    balBtn.style.marginTop='8px';
+    balBtn.innerHTML='📊 بروزرسانی موجودی '+(bankName||'حساب');
+    balBtn.onclick=()=>{cls('smsm');openBalanceUpdate(balance,bankName);};
+    res.appendChild(balBtn);
   }
 }
-function openSms(){
-  document.getElementById('smst').value='';
-  document.getElementById('smsr').style.display='none';
-  document.getElementById('smsf').style.display='none';
-  document.getElementById('samt').value='';document.getElementById('sdsc').value='';
-  const t=today();
-  fillMon('smon',t.m-1);
-  document.getElementById('sday').value=t.d;document.getElementById('syr').value=t.y;
-  smtp=null;
-  document.getElementById('sbi').className='tb';
-  document.getElementById('sbe').className='tb';
-  document.getElementById('smsm').classList.add('on');
-}
+
 function sst(tp){
   smtp=tp;
   document.getElementById('sbi').className='tb'+(tp==='income'?' ti':'');
@@ -1510,6 +1650,8 @@ function rRep(){
 // ============================================================
 function rSett(){
   const n=ST.appName||'سرمایه';
+  fillAccSelects();
+  updateAccCountDisplay();
   document.getElementById('app-name-display').textContent=n;
   document.getElementById('cat-inc-count').textContent=`${ST.cats.income.length} دسته`;
   document.getElementById('cat-exp-count').textContent=`${ST.cats.expense.length} دسته`;
@@ -1837,9 +1979,199 @@ function chkRecurring(){
   }
 }
 
+// ============================================================
+// ACCOUNTS SYSTEM
+// ============================================================
+const ACC_COLORS=['#1456A8','#1A8A4A','#C0392B','#7B1515','#4A42B0','#B5600A'];
+let eAccId=null, selAccColor='#1456A8';
+
+function openAccList(){
+  if(!ST.accounts) ST.accounts=[];
+  const acc=ST.accounts;
+  const content=document.getElementById('acc-list-content');
+  if(!acc.length){
+    content.innerHTML='<div style="text-align:center;padding:20px;color:var(--t3);font-size:13px">هنوز حسابی ثبت نشده</div>';
+  } else {
+    content.innerHTML=acc.map(a=>{
+      const bal=calcAccBalance(a.id);
+      return `<div style="display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:14px;padding:13px 14px;margin-bottom:8px;border:1px solid var(--border)">
+        <div style="width:46px;height:46px;border-radius:14px;background:${a.color||'#1456A8'};display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px ${a.color||'#1456A8'}55">
+          <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:#fff;stroke-width:1.8;fill:none"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:800;color:var(--t1)">${a.bank}</div>
+          <div style="font-size:11.5px;color:var(--t3);margin-top:2px">${a.name?a.name+' · ':''}${a.last4?'****'+a.last4:''}</div>
+        </div>
+        <div style="text-align:left">
+          <div style="font-size:14px;font-weight:800;color:${bal>=0?'var(--gr)':'var(--rd)'}">${nf(bal)}</div>
+          <div style="font-size:10.5px;color:var(--t3);margin-top:2px">تومان</div>
+        </div>
+        <button onclick="openAccForm('${a.id}')" style="background:var(--prl);border:none;border-radius:9px;padding:7px 12px;font-size:12px;color:var(--pr);cursor:pointer;font-family:'Vazirmatn',sans-serif;font-weight:700;flex-shrink:0">ویرایش</button>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('acclist').classList.add('on');
+}
+
+function calcAccBalance(accId){
+  const acc=ST.accounts.find(a=>a.id===accId);
+  if(!acc) return 0;
+  let bal=acc.initBalance||0;
+  // Add/subtract transactions linked to this account
+  ST.tx.forEach(t=>{
+    if(t.accId===accId){
+      if(t.tp==='income') bal+=t.a;
+      else bal-=t.a;
+    }
+  });
+  return bal;
+}
+
+function openAccForm(id){
+  eAccId=id||null;
+  cls('acclist');
+  document.getElementById('accmt').textContent=id?'ویرایش حساب':'حساب جدید';
+  document.getElementById('daccb').style.display=id?'flex':'none';
+  if(id){
+    const a=ST.accounts.find(x=>x.id===id);
+    if(a){
+      document.getElementById('acc-bank').value=a.bank||'بانک ملی';
+      document.getElementById('acc-name').value=a.name||'';
+      document.getElementById('acc-last4').value=a.last4||'';
+      document.getElementById('acc-init').value=a.initBalance||0;
+      pickAccColor(a.color||'#1456A8');
+    }
+  } else {
+    document.getElementById('acc-bank').value='بانک ملی';
+    document.getElementById('acc-name').value='';
+    document.getElementById('acc-last4').value='';
+    document.getElementById('acc-init').value='';
+    pickAccColor('#1456A8');
+  }
+  document.getElementById('accm').classList.add('on');
+}
+
+function pickAccColor(c){
+  selAccColor=c;
+  document.getElementById('acc-color').value=c;
+  ACC_COLORS.forEach((col,i)=>{
+    const btn=document.getElementById('acol-'+i);
+    if(btn) btn.style.borderColor=col===c?'var(--t1)':'transparent';
+  });
+}
+
+async function saveAcc(){
+  if(!ST.accounts) ST.accounts=[];
+  const bank=document.getElementById('acc-bank').value;
+  const name=document.getElementById('acc-name').value.trim();
+  const last4=document.getElementById('acc-last4').value.trim().slice(-4);
+  const color=document.getElementById('acc-color').value||'#1456A8';
+  const initBalance=toLn(document.getElementById('acc-init').value)||0;
+  if(!bank){ntf('⚠️ نام بانک الزامی است');return;}
+  if(eAccId){
+    const idx=ST.accounts.findIndex(a=>a.id===eAccId);
+    if(idx>=0) ST.accounts[idx]={...ST.accounts[idx],bank,name,last4,color,initBalance};
+  } else {
+    ST.accounts.push({id:uid(),bank,name,last4,color,initBalance});
+  }
+  await sv();cls('accm');ntf('✅ حساب ذخیره شد');
+  updateAccCountDisplay();
+  fillAccSelects();
+}
+
+async function delAcc(){
+  if(!eAccId) return;
+  if(!confirm('این حساب حذف شود؟ تراکنش‌های مرتبط همچنان باقی می‌مانند.')) return;
+  ST.accounts=(ST.accounts||[]).filter(a=>a.id!==eAccId);
+  await sv();cls('accm');ntf('🗑️ حذف شد');
+  updateAccCountDisplay();fillAccSelects();
+}
+
+function updateAccCountDisplay(){
+  const el=document.getElementById('acc-count-display');
+  if(el) el.textContent=`${(ST.accounts||[]).length} حساب ثبت شده`;
+}
+
+function fillAccSelects(){
+  const accs=ST.accounts||[];
+  const opts='<option value="">انتخاب نشده</option>'+accs.map(a=>`<option value="${a.id}">${a.bank}${a.name?' - '+a.name:''}${a.last4?' ('+a.last4+')':''}</option>`).join('');
+  ['tacc','balupdate-acc'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=opts;
+  });
+  // Transfer selects require at least 2 accounts
+  const transOpts=accs.map(a=>`<option value="${a.id}">${a.bank}${a.name?' - '+a.name:''}</option>`).join('');
+  ['trans-from','trans-to'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=transOpts;
+  });
+}
+
+function openTransfer(){
+  if(!ST.accounts||ST.accounts.length<2){
+    ntf('⚠️ حداقل ۲ حساب برای انتقال لازم است');return;
+  }
+  fillAccSelects();
+  document.getElementById('trans-amt').value='';
+  document.getElementById('trans-dsc').value='';
+  document.getElementById('transm').classList.add('on');
+}
+
+async function doTransfer(){
+  const fromId=document.getElementById('trans-from').value;
+  const toId=document.getElementById('trans-to').value;
+  const amt=toLn(document.getElementById('trans-amt').value);
+  const dsc=document.getElementById('trans-dsc').value.trim()||'انتقال بین حساب‌ها';
+  if(!fromId||!toId){ntf('⚠️ هر دو حساب را انتخاب کنید');return;}
+  if(fromId===toId){ntf('⚠️ حساب مبدا و مقصد یکسان است');return;}
+  if(!amt){ntf('⚠️ مبلغ الزامی است');return;}
+  const t=today();
+  // Record as expense from source account
+  ST.tx.push({id:uid(),tp:'expense',cat:'transfer',a:amt,dsc:'انتقال به '+getAccName(toId)+' · '+dsc,day:t.d,m:t.m-1,y:t.y,accId:fromId,isTransfer:true});
+  // Record as income to destination account
+  ST.tx.push({id:uid(),tp:'income',cat:'transfer',a:amt,dsc:'دریافت از '+getAccName(fromId)+' · '+dsc,day:t.d,m:t.m-1,y:t.y,accId:toId,isTransfer:true});
+  await sv();cls('transm');ntf('✅ انتقال ثبت شد');rDash();rTx();
+}
+
+function getAccName(id){
+  const a=(ST.accounts||[]).find(x=>x.id===id);
+  return a?(a.bank+(a.name?' - '+a.name:'')):'نامشخص';
+}
+
+// Show balance update modal from SMS
+let pendingBalance=0;
+function openBalanceUpdate(balance, bankName){
+  pendingBalance=balance;
+  fillAccSelects();
+  // Try to auto-match bank
+  const accs=ST.accounts||[];
+  const matched=accs.find(a=>a.bank&&bankName&&a.bank.includes(bankName.replace('بانک ','')));
+  if(matched) document.getElementById('balupdate-acc').value=matched.id;
+  document.getElementById('balupdate-amt').textContent=nf(balance)+' تومان';
+  document.getElementById('balupdate').classList.add('on');
+}
+
+async function applyBalanceUpdate(){
+  const accId=document.getElementById('balupdate-acc').value;
+  if(!accId){ntf('⚠️ حساب را انتخاب کنید');return;}
+  const acc=ST.accounts.find(a=>a.id===accId);
+  if(!acc) return;
+  // Set initBalance so that calcAccBalance returns pendingBalance
+  // balance = initBalance + (income tx - expense tx)
+  const txBalance=ST.tx.filter(t=>t.accId===accId).reduce((s,t)=>t.tp==='income'?s+t.a:s-t.a,0);
+  acc.initBalance=pendingBalance-txBalance;
+  await sv();cls('balupdate');ntf('✅ موجودی بروز شد');
+}
+
+function openAccListFromSettings(){
+  openAccList();
+}
+
 async function init(){
   await openDB();
   await loadState();
+  fillAccSelects();
+  updateAccCountDisplay();
   rDash();
   // Schedule daily notification check
   setTimeout(chkDue, 2000);
