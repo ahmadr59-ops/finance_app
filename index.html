@@ -278,7 +278,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   </div>
 
   <!-- Action buttons: flat compact light-blue -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 14px 0">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px 14px 0">
     <button onclick="openTx()" style="padding:12px 10px;border-radius:14px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;background:#5BA8E5;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;font-size:14px;font-weight:700"
       onpointerdown="this.style.opacity='.8'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
       <svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#fff;stroke-width:2.3;fill:none;stroke-linecap:round;flex-shrink:0"><path d="M12 5v14M5 12h14"/></svg>
@@ -288,6 +288,16 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
       onpointerdown="this.style.opacity='.8'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
       <svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;flex-shrink:0"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       پیامک بانک
+    </button>
+    <button onclick="openAccList()" style="padding:12px 10px;border-radius:14px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;background:#5BA8E5;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;font-size:14px;font-weight:700"
+      onpointerdown="this.style.opacity='.8'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
+      <svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;flex-shrink:0"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+      حساب‌ها
+    </button>
+    <button onclick="openTransfer()" style="padding:12px 10px;border-radius:14px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;background:#5BA8E5;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;font-size:14px;font-weight:700"
+      onpointerdown="this.style.opacity='.8'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
+      <svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;flex-shrink:0"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg>
+      انتقال بین حسابها
     </button>
   </div>
 
@@ -352,13 +362,8 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     </div>
   </div>
   <div class="card"><div class="card-t">خلاصه سالانه</div><div id="ys"></div></div>
-  <div style="padding:16px 14px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+  <div style="padding:16px 14px 0">
     <button class="btn btnp" onclick="exportCSV()" style="margin:0"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>خروجی CSV</button>
-    <button class="btn btns" onclick="backup()" style="margin:0"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>پشتیبان</button>
-  </div>
-  <div style="padding:10px 14px 0">
-    <button class="btn" onclick="document.getElementById('imp').click()" style="background:#fff;color:var(--t2);border:1.5px dashed var(--border);margin:0"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>بازیابی پشتیبان</button>
-    <input type="file" id="imp" accept=".json" style="display:none" onchange="restore(this)">
   </div>
   <div class="creator-footer">سرمایه — ساخته شده توسط <span>Ahmad Rezazadeh</span></div>
 </div>
@@ -448,7 +453,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     <div class="stt-list">
       <div class="stt-row">
         <div class="stt-ic" style="background:linear-gradient(145deg,#4A90D9,#1456A8)"><svg viewBox="0 0 24 24" style="stroke:#fff"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 12v4"/></svg></div>
-        <div class="stt-info"><strong>نسخه برنامه</strong><span id="app-name-display">سرمایه v3.0</span></div>
+        <div class="stt-info"><strong>نسخه برنامه</strong><span id="app-name-display">سرمایه v9</span></div>
         <span class="stt-badge">جدید</span>
       </div>
       <div class="stt-row">
@@ -1822,8 +1827,16 @@ function backup(){
   const mm=String(t.m).padStart(2,'0');
   const dd=String(t.d).padStart(2,'0');
   const fname=`sarmaye_bk_${yy}-${mm}-${dd}.json`;
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(ST,null,2)],{type:'application/json'}));
-  a.download=fname;a.click();URL.revokeObjectURL(a.href);ntf('💾 پشتیبان‌گیری انجام شد');
+  const blob=new Blob([JSON.stringify(ST,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=fname;
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  // Show modal with file info
+  const msg=`فایل پشتیبان با نام:\n${fname}\nدر پوشه «دانلودها» (Downloads) ذخیره شد.`;
+  setTimeout(()=>alert(msg),300);
 }
 async function restore(inp){
   const f=inp.files[0];if(!f)return;
@@ -1842,6 +1855,12 @@ async function restore(inp){
 // UI HELPERS
 // ============================================================
 function cls(id){document.getElementById(id).classList.remove('on');}
+function openSms(){
+  document.getElementById('smst').value='';
+  document.getElementById('smsr').style.display='none';
+  document.getElementById('smsf').style.display='none';
+  document.getElementById('smsm').classList.add('on');
+}
 function ntf(msg){
   const n=document.getElementById('ntf');
   n.textContent=msg;n.classList.add('on');
