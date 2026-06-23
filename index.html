@@ -278,7 +278,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   </div>
 
   <!-- Action buttons: flat compact light-blue -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px 14px 0">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:38px 14px 0">
     <button onclick="openTx()" style="padding:12px 10px;border-radius:14px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;background:#5BA8E5;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;font-size:14px;font-weight:700"
       onpointerdown="this.style.opacity='.8'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
       <svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#fff;stroke-width:2.3;fill:none;stroke-linecap:round;flex-shrink:0"><path d="M12 5v14M5 12h14"/></svg>
@@ -396,26 +396,6 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
       <div class="stt-row" onclick="openCatMgr('expense')">
         <div class="stt-ic" style="background:linear-gradient(145deg,#FF6B6B,#C0392B)"><svg viewBox="0 0 24 24" style="stroke:#fff"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
         <div class="stt-info"><strong>دسته‌بندی هزینه‌ها</strong><span id="cat-exp-count"></span></div>
-        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="stt-sec" style="margin-top:14px">
-    <div class="stt-sec-lbl">حساب‌های بانکی</div>
-    <div class="stt-list">
-      <div class="stt-row" onclick="openAccList()">
-        <div class="stt-ic" style="background:linear-gradient(145deg,#4A90D9,#1456A8)">
-          <svg viewBox="0 0 24 24" style="stroke:#fff"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
-        </div>
-        <div class="stt-info"><strong>مدیریت حساب‌ها</strong><span id="acc-count-display">۰ حساب ثبت شده</span></div>
-        <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
-      </div>
-      <div class="stt-row" onclick="openTransfer()">
-        <div class="stt-ic" style="background:linear-gradient(145deg,#6C8EBF,#3A5A8A)">
-          <svg viewBox="0 0 24 24" style="stroke:#fff"><path d="M17 3l4 4-4 4M21 7H9M7 21l-4-4 4-4M3 17h12"/></svg>
-        </div>
-        <div class="stt-info"><strong>انتقال بین حساب‌ها</strong><span>جابجایی وجه</span></div>
         <div class="stt-arrow"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></div>
       </div>
     </div>
@@ -691,6 +671,13 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     </select>
   </div>
   <div class="fg"><label>نام/عنوان حساب (اختیاری)</label><input type="text" id="acc-name" placeholder="مثال: حساب جاری، پس‌انداز"></div>
+  <div class="fg"><label>شماره حساب (اختیاری)</label><input type="text" id="acc-number" inputmode="numeric" placeholder="مثال: 0106581234567"></div>
+  <div class="fg"><label>شماره کارت (اختیاری)</label><input type="text" id="acc-card" inputmode="numeric" maxlength="19" placeholder="مثال: 6037-9918-1234-5678"></div>
+  <div class="fg"><label>شماره شبا (اختیاری)</label><input type="text" id="acc-iban" placeholder="مثال: IR120570028080010957174"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="fg" style="margin:0"><label>CVV2 (اختیاری)</label><input type="text" id="acc-cvv2" inputmode="numeric" maxlength="4" placeholder="مثال: 123"></div>
+    <div class="fg" style="margin:0"><label>تاریخ انقضا (اختیاری)</label><input type="text" id="acc-expiry" inputmode="numeric" maxlength="5" placeholder="مثال: 05/29"></div>
+  </div>
   <div class="fg"><label>۴ رقم آخر کارت (اختیاری)</label><input type="number" id="acc-last4" inputmode="numeric" maxlength="4" placeholder="مثال: 1234"></div>
   <div class="fg">
     <label>رنگ کارت</label>
@@ -1008,8 +995,10 @@ function rDash(){
   rc.innerHTML=last.length?last.map(txHtml).join(''):emptyHtml('bag','تراکنشی ثبت نشده');
   const isIos=/iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone=window.navigator.standalone;
-  if(isIos&&!isStandalone&&!localStorage.getItem('hideBanner'))
-    document.getElementById('install-hint').style.display='flex';
+  if(isIos&&!isStandalone&&!localStorage.getItem('hideBanner')){
+    const hint=document.getElementById('install-hint');
+    if(hint) hint.style.display='flex';
+  }
   chkNotifBadge();
 }
 function emptyHtml(ic,msg){
@@ -2050,6 +2039,11 @@ function openAccForm(id){
     if(a){
       document.getElementById('acc-bank').value=a.bank||'بانک ملی';
       document.getElementById('acc-name').value=a.name||'';
+      document.getElementById('acc-number').value=a.accountNumber||'';
+      document.getElementById('acc-card').value=a.cardNumber||'';
+      document.getElementById('acc-iban').value=a.iban||'';
+      document.getElementById('acc-cvv2').value=a.cvv2||'';
+      document.getElementById('acc-expiry').value=a.expiry||'';
       document.getElementById('acc-last4').value=a.last4||'';
       document.getElementById('acc-init').value=a.initBalance||0;
       pickAccColor(a.color||'#1456A8');
@@ -2057,6 +2051,11 @@ function openAccForm(id){
   } else {
     document.getElementById('acc-bank').value='بانک ملی';
     document.getElementById('acc-name').value='';
+    document.getElementById('acc-number').value='';
+    document.getElementById('acc-card').value='';
+    document.getElementById('acc-iban').value='';
+    document.getElementById('acc-cvv2').value='';
+    document.getElementById('acc-expiry').value='';
     document.getElementById('acc-last4').value='';
     document.getElementById('acc-init').value='';
     pickAccColor('#1456A8');
@@ -2080,12 +2079,17 @@ async function saveAcc(){
   const last4=document.getElementById('acc-last4').value.trim().slice(-4);
   const color=document.getElementById('acc-color').value||'#1456A8';
   const initBalance=toLn(document.getElementById('acc-init').value)||0;
+  const accountNumber=document.getElementById('acc-number').value.trim();
+  const cardNumber=document.getElementById('acc-card').value.trim();
+  const iban=document.getElementById('acc-iban').value.trim();
+  const cvv2=document.getElementById('acc-cvv2').value.trim();
+  const expiry=document.getElementById('acc-expiry').value.trim();
   if(!bank){ntf('⚠️ نام بانک الزامی است');return;}
   if(eAccId){
     const idx=ST.accounts.findIndex(a=>a.id===eAccId);
-    if(idx>=0) ST.accounts[idx]={...ST.accounts[idx],bank,name,last4,color,initBalance};
+    if(idx>=0) ST.accounts[idx]={...ST.accounts[idx],bank,name,last4,color,initBalance,accountNumber,cardNumber,iban,cvv2,expiry};
   } else {
-    ST.accounts.push({id:uid(),bank,name,last4,color,initBalance});
+    ST.accounts.push({id:uid(),bank,name,last4,color,initBalance,accountNumber,cardNumber,iban,cvv2,expiry});
   }
   await sv();cls('accm');ntf('✅ حساب ذخیره شد');
   updateAccCountDisplay();
