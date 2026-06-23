@@ -253,51 +253,41 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     </div>
   </div>
 
-  <!-- Income / Expense gradient cards -->
+  <!-- Income / Expense flat light cards -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 14px 0">
-    <div style="background:linear-gradient(145deg,#1A8A4A,#0F5C32);border-radius:18px;padding:16px;box-shadow:0 6px 20px rgba(26,138,74,0.3);position:relative;overflow:hidden">
-      <div style="position:absolute;top:-18px;right:-18px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:#fff;stroke-width:2.5;fill:none;stroke-linecap:round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    <div style="background:#E8F5EE;border-radius:16px;padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+        <span style="width:26px;height:26px;border-radius:8px;background:#C3E8D1;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#1A8A4A;stroke-width:2.5;fill:none;stroke-linecap:round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
         </span>
-        <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.85)">درآمد ماه</span>
+        <span style="font-size:12px;font-weight:700;color:#1A8A4A">درآمد ماه</span>
       </div>
-      <div id="di" style="font-size:20px;font-weight:800;color:#fff;line-height:1">۰</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px;font-weight:600">تومان</div>
+      <div id="di" style="font-size:19px;font-weight:800;color:#1A8A4A;line-height:1">۰</div>
+      <div style="font-size:11px;color:#4AAA72;margin-top:4px;font-weight:600">تومان</div>
     </div>
-    <div style="background:linear-gradient(145deg,#C0392B,#7B1515);border-radius:18px;padding:16px;box-shadow:0 6px 20px rgba(192,57,43,0.3);position:relative;overflow:hidden">
-      <div style="position:absolute;top:-18px;right:-18px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:#fff;stroke-width:2.5;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    <div style="background:#FDECEA;border-radius:16px;padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+        <span style="width:26px;height:26px;border-radius:8px;background:#F9C9C5;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#C0392B;stroke-width:2.5;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
         </span>
-        <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.85)">هزینه ماه</span>
+        <span style="font-size:12px;font-weight:700;color:#C0392B">هزینه ماه</span>
       </div>
-      <div id="de" style="font-size:20px;font-weight:800;color:#fff;line-height:1">۰</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px;font-weight:600">تومان</div>
+      <div id="de" style="font-size:19px;font-weight:800;color:#C0392B;line-height:1">۰</div>
+      <div style="font-size:11px;color:#D9534F;margin-top:4px;font-weight:600">تومان</div>
     </div>
   </div>
 
-  <!-- Action buttons: 3D professional -->
+  <!-- Action buttons: flat compact light-blue -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 14px 0">
-    <button onclick="openTx()" style="padding:16px 10px;border-radius:18px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;background:linear-gradient(160deg,#2E83DE 0%,#0D4DB5 100%);box-shadow:0 6px 0 #082C65,0 8px 18px rgba(13,77,181,0.35);color:#fff;display:flex;flex-direction:column;align-items:center;gap:9px;transition:transform .1s,box-shadow .1s"
-      onpointerdown="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #082C65,0 4px 8px rgba(13,77,181,0.25)'"
-      onpointerup="this.style.transform='';this.style.boxShadow='0 6px 0 #082C65,0 8px 18px rgba(13,77,181,0.35)'"
-      onpointercancel="this.style.transform='';this.style.boxShadow='0 6px 0 #082C65,0 8px 18px rgba(13,77,181,0.35)'">
-      <span style="width:48px;height:48px;border-radius:15px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M12 5v14M5 12h14"/></svg>
-      </span>
-      <span style="font-size:13.5px;font-weight:800;letter-spacing:.2px">تراکنش جدید</span>
+    <button onclick="openTx()" style="padding:12px 10px;border-radius:14px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;background:#5BA8E5;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;font-size:14px;font-weight:700"
+      onpointerdown="this.style.opacity='.8'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
+      <svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#fff;stroke-width:2.3;fill:none;stroke-linecap:round;flex-shrink:0"><path d="M12 5v14M5 12h14"/></svg>
+      تراکنش جدید
     </button>
-    <button onclick="openSms()" style="padding:16px 10px;border-radius:18px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;background:linear-gradient(160deg,#5B8DB8 0%,#2E5F8A 100%);box-shadow:0 6px 0 #1C3D5C,0 8px 18px rgba(46,95,138,0.35);color:#fff;display:flex;flex-direction:column;align-items:center;gap:9px;transition:transform .1s,box-shadow .1s"
-      onpointerdown="this.style.transform='translateY(4px)';this.style.boxShadow='0 2px 0 #1C3D5C,0 4px 8px rgba(46,95,138,0.25)'"
-      onpointerup="this.style.transform='';this.style.boxShadow='0 6px 0 #1C3D5C,0 8px 18px rgba(46,95,138,0.35)'"
-      onpointercancel="this.style.transform='';this.style.boxShadow='0 6px 0 #1C3D5C,0 8px 18px rgba(46,95,138,0.35)'">
-      <span style="width:48px;height:48px;border-radius:15px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" style="width:26px;height:26px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      </span>
-      <span style="font-size:13.5px;font-weight:800;letter-spacing:.2px">پیامک بانک</span>
+    <button onclick="openSms()" style="padding:12px 10px;border-radius:14px;border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;background:#5BA8E5;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;font-size:14px;font-weight:700"
+      onpointerdown="this.style.opacity='.8'" onpointerup="this.style.opacity='1'" onpointercancel="this.style.opacity='1'">
+      <svg viewBox="0 0 24 24" style="width:19px;height:19px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;flex-shrink:0"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      پیامک بانک
     </button>
   </div>
 
@@ -307,6 +297,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     <button onclick="nav(1,document.querySelectorAll('.nb')[1])" style="background:none;border:none;font-size:12.5px;font-weight:700;color:var(--pr);cursor:pointer;font-family:'Vazirmatn',sans-serif">مشاهده همه ←</button>
   </div>
   <div class="card" style="margin:0 14px;padding:4px 14px"><div id="rtx"></div></div>
+</div>
 
 <!-- SCREEN 1: Transactions -->
 <div class="scr" id="s1">
@@ -370,7 +361,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     <input type="file" id="imp" accept=".json" style="display:none" onchange="restore(this)">
   </div>
   <div class="creator-footer">سرمایه — ساخته شده توسط <span>Ahmad Rezazadeh</span></div>
-</div>
+</div></div>
 
 <!-- SCREEN 4: Settings -->
 <div class="scr" id="s4">
@@ -457,7 +448,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     <div class="stt-list">
       <div class="stt-row">
         <div class="stt-ic" style="background:linear-gradient(145deg,#4A90D9,#1456A8)"><svg viewBox="0 0 24 24" style="stroke:#fff"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 12v4"/></svg></div>
-        <div class="stt-info"><strong>نسخه برنامه</strong><span>سرمایه v3.0</span></div>
+        <div class="stt-info"><strong>نسخه برنامه</strong><span id="app-name-display">سرمایه v3.0</span></div>
         <span class="stt-badge">جدید</span>
       </div>
       <div class="stt-row">
@@ -1200,10 +1191,8 @@ function parseSms(){
 
   // ---- AMOUNT DETECTION ----
   // Bank Melli: برداشت:1,070,000- or خريد: 16,950,000
-  const melliWithdraw=/(?:^|[\s
-])برداشت\s*:\s*([\d,،٬]+)/im.exec(txt);
-  const melliPurchase=/(?:^|[\s
-])خريد\s*:\s*([\d,،٬]+)/im.exec(txt);
+  const melliWithdraw=/(?:^|[\s\n])برداشت\s*:\s*([\d,،٬]+)/im.exec(txt);
+  const melliPurchase=/(?:^|[\s\n])خريد\s*:\s*([\d,،٬]+)/im.exec(txt);
   if(melliWithdraw){
     amount=parseFloat(melliWithdraw[1].replace(/[,،٬]/g,''))||0;
     inRial=false;bankName='بانک ملی';
@@ -1652,7 +1641,7 @@ function rSett(){
   const n=ST.appName||'سرمایه';
   fillAccSelects();
   updateAccCountDisplay();
-  document.getElementById('app-name-display').textContent=n;
+  const andEl=document.getElementById('app-name-display');if(andEl)andEl.textContent=n;
   document.getElementById('cat-inc-count').textContent=`${ST.cats.income.length} دسته`;
   document.getElementById('cat-exp-count').textContent=`${ST.cats.expense.length} دسته`;
   updateNotifStatus();
@@ -1668,7 +1657,7 @@ async function saveAppName(){
   if(!n){ntf('⚠️ نام الزامی است');return;}
   ST.appName=n;
   document.title=n;
-  document.getElementById('app-name-display').textContent=n;
+  const andEl2=document.getElementById('app-name-display');if(andEl2)andEl2.textContent=n;
   // Update all h1 elements that show app name
   document.querySelectorAll('.hdr h1').forEach(el=>{if(el.textContent==='سرمایه'||el.textContent===n){}});
   await sv();cls('appnm');ntf('✅ نام برنامه ذخیره شد');
@@ -1828,8 +1817,13 @@ function exportCSV(){
   a.download='sarmaye.csv';a.click();URL.revokeObjectURL(a.href);ntf('📥 CSV دانلود شد');
 }
 function backup(){
+  const t=today();
+  const yy=String(t.y);
+  const mm=String(t.m).padStart(2,'0');
+  const dd=String(t.d).padStart(2,'0');
+  const fname=`sarmaye_bk_${yy}-${mm}-${dd}.json`;
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(ST,null,2)],{type:'application/json'}));
-  a.download=`sarmaye_bk_${Date.now()}.json`;a.click();URL.revokeObjectURL(a.href);ntf('💾 پشتیبان‌گیری انجام شد');
+  a.download=fname;a.click();URL.revokeObjectURL(a.href);ntf('💾 پشتیبان‌گیری انجام شد');
 }
 async function restore(inp){
   const f=inp.files[0];if(!f)return;
