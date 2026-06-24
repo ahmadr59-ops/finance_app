@@ -721,6 +721,17 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
     <input type="hidden" id="acc-color" value="#1456A8">
   </div>
   <div class="fg"><label>موجودی اولیه (تومان)</label><input type="number" id="acc-init" inputmode="numeric" placeholder="۰"></div>
+  <div class="fg">
+    <label>تاریخ این موجودی <span style="font-size:11px;color:var(--t3);font-weight:500">(موجودی مربوط به چه تاریخی است؟)</span></label>
+    <div class="dategrid">
+      <div class="fg"><label>روز</label><input type="number" id="acc-init-d" min="1" max="31" inputmode="numeric" placeholder="روز"></div>
+      <div class="fg"><label>ماه</label><select id="acc-init-m"></select></div>
+      <div class="fg"><label>سال</label><input type="number" id="acc-init-y" inputmode="numeric" placeholder="مثلاً ۱۴۰۵"></div>
+    </div>
+    <div style="font-size:11.5px;color:var(--t3);margin-top:4px;line-height:1.6">
+      💡 تراکنش‌های <strong>قبل</strong> از این تاریخ روی موجودی تأثیر نمی‌گذارند
+    </div>
+  </div>
   <button class="btn btnp" onclick="saveAcc()">ذخیره</button>
   <button class="btn btns" onclick="cls('accm')">انصراف</button>
   <button class="btn btnd" id="daccb" style="display:none" onclick="delAcc()">
@@ -984,6 +995,11 @@ function migrateState(s){
       // 6. cvv2: keep only digits
       if(a.cvv2){
         a.cvv2=String(a.cvv2).replace(/\D/g,'');
+      }
+      // 7. initDate: if missing, default to today so old accounts are not affected by past tx
+      if(!a.initDate||!a.initDate.y){
+        const t=today();
+        a.initDate={d:t.d, m:t.m-1, y:t.y};
       }
       return a;
     });
@@ -2336,6 +2352,7 @@ function openAccList(){
         a.exp?`<div class="acc-detail-row"><span>تاریخ انقضا</span><span>${a.exp}</span></div>`:'',
         a.cvv2?`<div class="acc-detail-row"><span>CVV2</span><span>${'•'.repeat(a.cvv2.length)}</span></div>`:'',
         a.iban?`<div class="acc-detail-row"><span>شبا</span><span style="font-size:11px;direction:ltr">IR${a.iban}</span></div>`:'',
+        a.initDate?`<div class="acc-detail-row"><span>تاریخ موجودی اولیه</span><span>${toFa(a.initDate.d)} ${MFA[a.initDate.m]} ${toFa(a.initDate.y)}</span></div>`:'',
       ].filter(Boolean).join('');
       return `<div style="background:var(--bg);border-radius:14px;margin-bottom:8px;border:1px solid var(--border);overflow:hidden">
         <div style="display:flex;align-items:center;gap:12px;padding:13px 14px">
@@ -2361,16 +2378,27 @@ function openAccList(){
   document.getElementById('acclist').classList.add('on');
 }
 
+// Convert {y,m,d} to a sortable integer: YYYYMMDD (m is 0-based)
+function dateToInt(y,m,d){ return y*10000+(m+1)*100+d; }
+
 function calcAccBalance(accId){
   const acc=ST.accounts.find(a=>a.id===accId);
   if(!acc) return 0;
   let bal=acc.initBalance||0;
-  // Add/subtract transactions linked to this account
+
+  // If account has an initDate, only count transactions ON or AFTER that date
+  const hasInitDate=acc.initDate&&acc.initDate.y&&acc.initDate.m!==undefined&&acc.initDate.d;
+  const cutoff=hasInitDate?dateToInt(acc.initDate.y,acc.initDate.m,acc.initDate.d):0;
+
   ST.tx.forEach(t=>{
-    if(t.accId===accId){
-      if(t.tp==='income') bal+=t.a;
-      else bal-=t.a;
+    if(t.accId!==accId) return;
+    // t.m is 0-based
+    if(cutoff>0){
+      const txDate=dateToInt(t.y||1400, t.m!==undefined?t.m:0, t.d||t.day||1);
+      if(txDate<cutoff) return; // skip transactions before initDate
     }
+    if(t.tp==='income') bal+=t.a;
+    else bal-=t.a;
   });
   return bal;
 }
@@ -2380,6 +2408,8 @@ function openAccForm(id){
   cls('acclist');
   document.getElementById('accmt').textContent=id?'ویرایش حساب':'حساب جدید';
   document.getElementById('daccb').style.display=id?'flex':'none';
+  // Populate month selects
+  fillMon('acc-init-m',today().m-1);
   if(id){
     const a=ST.accounts.find(x=>x.id===id);
     if(a){
@@ -2392,6 +2422,11 @@ function openAccForm(id){
       document.getElementById('acc-iban').value=a.iban||'';
       document.getElementById('acc-last4').value=a.last4||'';
       document.getElementById('acc-init').value=a.initBalance||0;
+      // initDate
+      const id2=a.initDate||{};
+      document.getElementById('acc-init-d').value=id2.d||today().d;
+      fillMon('acc-init-m', id2.m!==undefined?id2.m:today().m-1);
+      document.getElementById('acc-init-y').value=id2.y||today().y;
       pickAccColor(a.color||'#1456A8');
     }
   } else {
@@ -2404,6 +2439,10 @@ function openAccForm(id){
     document.getElementById('acc-iban').value='';
     document.getElementById('acc-last4').value='';
     document.getElementById('acc-init').value='';
+    // Default initDate = today
+    document.getElementById('acc-init-d').value=today().d;
+    fillMon('acc-init-m', today().m-1);
+    document.getElementById('acc-init-y').value=today().y;
     pickAccColor('#1456A8');
   }
   document.getElementById('accm').classList.add('on');
@@ -2441,6 +2480,11 @@ async function saveAcc(){
   const iban=document.getElementById('acc-iban').value.trim().replace(/\D/g,'');
   const color=document.getElementById('acc-color').value||'#1456A8';
   const initBalance=toLn(document.getElementById('acc-init').value)||0;
+  // initDate
+  const initD=parseInt(document.getElementById('acc-init-d').value)||today().d;
+  const initM=parseInt(document.getElementById('acc-init-m').value);
+  const initY=parseInt(document.getElementById('acc-init-y').value)||today().y;
+  const initDate={d:initD, m:isNaN(initM)?today().m-1:initM, y:initY};
   // derive last4 from card number
   const last4=cardnoRaw.length>=4?cardnoRaw.slice(-4):'';
   const cardno=cardnoRaw.length>0?cardnoRaw.replace(/(\d{4})(?=\d)/g,'$1-'):'';
@@ -2452,7 +2496,9 @@ async function saveAcc(){
   if(iban&&iban.length!==24){ntf('⚠️ شماره شبا باید ۲۴ رقم باشد (بدون IR)');hiErr('acc-iban');return;}
   if(initBalance<0){ntf('⚠️ موجودی اولیه نمی‌تواند منفی باشد');hiErr('acc-init');return;}
   if(initBalance>100000000000){ntf('⚠️ موجودی اولیه غیرمنطقی است');hiErr('acc-init');return;}
-  const rec={bank,name,accno,cardno,last4,exp,cvv2,iban,color,initBalance};
+  if(!initD||initD<1||initD>31){ntf('⚠️ روز تاریخ موجودی اولیه نامعتبر است');hiErr('acc-init-d');return;}
+  if(!initY||initY<1380||initY>1450){ntf('⚠️ سال تاریخ موجودی اولیه نامعتبر است');hiErr('acc-init-y');return;}
+  const rec={bank,name,accno,cardno,last4,exp,cvv2,iban,color,initBalance,initDate};
   if(eAccId){
     const idx=ST.accounts.findIndex(a=>a.id===eAccId);
     if(idx>=0) ST.accounts[idx]={...ST.accounts[idx],...rec};
