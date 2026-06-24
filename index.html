@@ -698,7 +698,7 @@ body{font-family:'Vazirmatn',-apple-system,sans-serif;background:var(--bg);color
   <div class="fg"><label>شماره حساب (اختیاری)</label><input type="text" id="acc-accno" inputmode="numeric" placeholder="مثال: 0102345678001"></div>
   <div class="fg"><label>شماره کارت (اختیاری)</label><input type="text" id="acc-cardno" inputmode="numeric" maxlength="19" placeholder="مثال: 6037-XXXX-XXXX-1234" oninput="fmtCard(this)"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-    <div class="fg"><label>تاریخ انقضا (اختیاری)</label><input type="text" id="acc-exp" inputmode="numeric" maxlength="5" placeholder="MM/YY" oninput="fmtExp(this)"></div>
+    <div class="fg"><label>تاریخ انقضا (اختیاری)</label><input type="text" id="acc-exp" inputmode="numeric" maxlength="5" placeholder="YY/MM" oninput="fmtExp(this)"></div>
     <div class="fg"><label>CVV2 (اختیاری)</label><input type="text" id="acc-cvv2" inputmode="numeric" maxlength="4" placeholder="•••" autocomplete="off"></div>
   </div>
   <div class="fg"><label>شماره شبا (اختیاری)</label>
@@ -894,15 +894,19 @@ function def(){
 async function loadState(){
   try{
     const saved=await dbGet('state');
-    ST=saved?{...def(),...saved,cats:{
-      income:saved.cats?.income||def().cats.income,
-      expense:saved.cats?.expense||def().cats.expense
-    }}:def();
+    if(saved){
+      const merged={...def(),...saved,cats:{
+        income:saved.cats?.income||def().cats.income,
+        expense:saved.cats?.expense||def().cats.expense
+      }};
+      ST=migrateState(merged);
+    } else {
+      ST=def();
+    }
   }catch(e){
-    // Fallback to localStorage if IndexedDB fails
     try{
       const s=localStorage.getItem('srmy1');
-      ST=s?JSON.parse(s):def();
+      ST=s?migrateState(JSON.parse(s)):def();
     }catch{ST=def();}
   }
   SM=today().m-1;
@@ -919,8 +923,131 @@ async function sv(){
 }
 
 // ============================================================
-// UTILS
+// DATA MIGRATION — normalize legacy data to current format
 // ============================================================
+function migrateState(s){
+  if(!s) return s;
+
+  // ---- Accounts migration ----
+  if(Array.isArray(s.accounts)){
+    s.accounts=s.accounts.map(a=>{
+      // 1. cardno: strip all non-digits then reformat as XXXX-XXXX-XXXX-XXXX
+      if(a.cardno){
+        const digits=a.cardno.replace(/\D/g,'');
+        if(digits.length===16){
+          a.cardno=digits.replace(/(\d{4})(?=\d)/g,'$1-');
+          a.last4=digits.slice(-4);
+        } else if(digits.length>0){
+          // partial: keep as-is but clean
+          a.cardno=digits;
+        }
+      }
+      // 2. last4: if no cardno but last4 exists, keep it
+      if(!a.cardno&&a.last4){
+        a.last4=String(a.last4).replace(/\D/g,'').slice(-4);
+      }
+      // 3. exp: normalize to YY/MM
+      //    accept: MM/YY, YY/MM, MMYY, YYMM, MM-YY, YY-MM
+      if(a.exp){
+        const raw=String(a.exp).trim();
+        const digits=raw.replace(/\D/g,'');
+        if(digits.length===4){
+          const p1=parseInt(digits.slice(0,2));
+          const p2=parseInt(digits.slice(2,4));
+          // heuristic: months are 01-12; years are typically 00-99
+          // if p1 looks like a month (1-12) and p2 looks like a year → MM/YY → convert to YY/MM
+          if(p1>=1&&p1<=12&&(p2>12||p2===0)){
+            a.exp=digits.slice(2)+'/'+digits.slice(0,2); // YY/MM
+          } else {
+            // assume already YY/MM or unknown — just format with slash
+            a.exp=digits.slice(0,2)+'/'+digits.slice(2);
+          }
+        } else if(/^\d{2}[\/\-]\d{2}$/.test(raw)){
+          const [left,right]=raw.split(/[\/\-]/);
+          const l=parseInt(left),r=parseInt(right);
+          if(l>=1&&l<=12&&(r>12||r===0)){
+            // looks like MM/YY or MM-YY → flip to YY/MM
+            a.exp=right+'/'+left;
+          } else {
+            a.exp=left+'/'+right; // already YY/MM or keep as-is
+          }
+        }
+      }
+      // 4. iban: strip IR prefix and non-digits if stored with prefix
+      if(a.iban){
+        a.iban=String(a.iban).replace(/^IR/i,'').replace(/\D/g,'');
+      }
+      // 5. accno: keep only digits
+      if(a.accno){
+        a.accno=String(a.accno).replace(/\D/g,'');
+      }
+      // 6. cvv2: keep only digits
+      if(a.cvv2){
+        a.cvv2=String(a.cvv2).replace(/\D/g,'');
+      }
+      return a;
+    });
+  }
+
+  // ---- Transactions migration ----
+  if(Array.isArray(s.tx)){
+    s.tx=s.tx.map(t=>{
+      // amount: ensure positive number
+      if(t.a) t.a=Math.abs(Number(t.a))||0;
+      // month: normalize to 0-based if somehow stored as 1-based (>11)
+      if(typeof t.m==='number'&&t.m>11) t.m=t.m-1;
+      // year: if missing, default to current Jalali year
+      if(!t.y||t.y<1300) t.y=today().y;
+      // day: clamp to valid range
+      if(!t.day||t.day<1) t.day=1;
+      if(t.day>31) t.day=31;
+      return t;
+    });
+  }
+
+  // ---- Tenants migration ----
+  if(Array.isArray(s.ten)){
+    s.ten=s.ten.map(ten=>{
+      if(!ten.id) ten.id=uid();
+      if(!ten.tp) ten.tp='مسکونی';
+      if(!ten.rent) ten.rent=0;
+      if(!ten.dep) ten.dep=0;
+      if(!ten.start_y) ten.start_y=today().y;
+      if(ten.start_m===undefined) ten.start_m=0;
+      if(!ten.start_d||ten.start_d<1) ten.start_d=1;
+      return ten;
+    });
+  }
+
+  // ---- Categories migration ----
+  if(s.cats){
+    if(!s.cats.income||!s.cats.income.length) s.cats.income=def().cats.income;
+    if(!s.cats.expense||!s.cats.expense.length) s.cats.expense=def().cats.expense;
+    // ensure every cat has required fields
+    ['income','expense'].forEach(tp=>{
+      s.cats[tp]=s.cats[tp].map(c=>({
+        id:c.id||('c'+uid()),
+        n:c.n||'دسته‌بندی',
+        i:c.i||'more',
+        c:c.c||'#65728C'
+      }));
+    });
+  }
+
+  // ---- Recurring migration ----
+  if(Array.isArray(s.recurring)){
+    s.recurring=s.recurring.map(r=>{
+      if(!r.id) r.id=uid();
+      if(r.active===undefined) r.active=true;
+      if(!r.day||r.day<1||r.day>31) r.day=1;
+      return r;
+    });
+  }
+
+  return s;
+}
+
+
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
 const FA=['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
 function toFa(s){return String(s).replace(/[0-9]/g,d=>FA[d]);}
@@ -1881,9 +2008,21 @@ async function restore(inp){
   r.onload=async e=>{
     try{
       const p=JSON.parse(e.target.result);
-      if(p.tx&&p.cats){ST=p;await sv();ntf('✅ بازیابی شد');rDash();}
-      else ntf('⚠️ فایل نامعتبر');
-    }catch{ntf('⚠️ خطا');}
+      if(p.tx&&p.cats){
+        ST=migrateState({...def(),...p,cats:{
+          income:p.cats?.income||def().cats.income,
+          expense:p.cats?.expense||def().cats.expense
+        }});
+        await sv();
+        rDash();rTx();rSett();
+        ntf('✅ بازیابی و به‌روزرسانی فرمت انجام شد');
+      } else {
+        ntf('⚠️ فایل نامعتبر — tx یا cats یافت نشد');
+      }
+    }catch(err){
+      console.error('Restore error:',err);
+      ntf('⚠️ خطا در خواندن فایل');
+    }
   };
   r.readAsText(f);
 }
@@ -2181,7 +2320,7 @@ async function saveAcc(){
   // --- Validation ---
   if(!bank){ntf('⚠️ نام بانک الزامی است');return;}
   if(cardnoRaw&&(cardnoRaw.length<16||cardnoRaw.length>16)){ntf('⚠️ شماره کارت باید ۱۶ رقم باشد');hiErr('acc-cardno');return;}
-  if(exp&&!/^\d{2}\/\d{2}$/.test(exp)){ntf('⚠️ تاریخ انقضا باید به صورت MM/YY باشد');hiErr('acc-exp');return;}
+  if(exp&&!/^\d{2}\/\d{2}$/.test(exp)){ntf('⚠️ تاریخ انقضا باید به صورت YY/MM باشد');hiErr('acc-exp');return;}
   if(cvv2&&(cvv2.length<3||cvv2.length>4)){ntf('⚠️ CVV2 باید ۳ یا ۴ رقم باشد');hiErr('acc-cvv2');return;}
   if(iban&&iban.length!==24){ntf('⚠️ شماره شبا باید ۲۴ رقم باشد (بدون IR)');hiErr('acc-iban');return;}
   if(initBalance<0){ntf('⚠️ موجودی اولیه نمی‌تواند منفی باشد');hiErr('acc-init');return;}
