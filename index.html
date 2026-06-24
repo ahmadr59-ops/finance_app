@@ -1332,123 +1332,250 @@ async function delTx(){
 // Type (income/expense) and category are always chosen by the user,
 // since bank wording for "type" is too inconsistent to trust blindly.
 // ============================================================
-function parseSms(){
-  const raw=document.getElementById('smst').value;
-  if(!raw.trim()){ntf('⚠️ متن پیامک را وارد کنید');return;}
+// ============================================================
+// SMS PARSER ENGINE
+// ============================================================
 
-  const txt=raw
-    .replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
-    .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+// Normalize Persian/Arabic digits and common separators to ASCII
+function normDigits(s){
+  return s
+    .replace(/[۰-۹]/g,d=>d.charCodeAt(0)-0x06F0)
+    .replace(/[٠-٩]/g,d=>d.charCodeAt(0)-0x0660)
+    .replace(/،|٬/g,',');
+}
 
-  let amount=0, inRial=false, bankName='';
-  let jDay=0, jMon=-1, jYear=0;
-  let balance=0, balInRial=false;
+// Parse a number string (with commas) to integer, returns 0 on fail
+function parseNum(s){
+  if(!s) return 0;
+  return parseInt(s.replace(/[,،٬\s]/g,''),10)||0;
+}
 
-  // ---- AMOUNT DETECTION ----
-  // Bank Melli: برداشت:1,070,000- or خريد: 16,950,000
-  const melliWithdraw=/(?:^|[\s\n])برداشت\s*:\s*([\d,،٬]+)/im.exec(txt);
-  const melliPurchase=/(?:^|[\s\n])خريد\s*:\s*([\d,،٬]+)/im.exec(txt);
-  if(melliWithdraw){
-    amount=parseFloat(melliWithdraw[1].replace(/[,،٬]/g,''))||0;
-    inRial=false;bankName='بانک ملی';
-  } else if(melliPurchase){
-    amount=parseFloat(melliPurchase[1].replace(/[,،٬]/g,''))||0;
-    inRial=false;bankName='بانک ملی';
-  }
-  // مبلغ: xxx ريال (Tejarat, Shahr, others)
-  if(!amount){
-    const m=/مبلغ\s*:?\s*([\d,،٬]+)\s*ريال/i.exec(txt);
-    if(m){amount=parseFloat(m[1].replace(/[,،٬]/g,''))||0;inRial=true;}
-  }
-  if(!amount){
-    const m=/مبلغ\s*:?\s*([\d,،٬]+)\s*تومان/i.exec(txt);
-    if(m){amount=parseFloat(m[1].replace(/[,،٬]/g,''))||0;inRial=false;}
-  }
-  if(!amount){
-    const m=/([\d]{1,3}(?:[,،٬]\d{3})+)\s*ريال/i.exec(txt);
-    if(m){const v=parseFloat(m[1].replace(/[,،٬]/g,''))||0;if(v<100000000000){amount=v;inRial=true;}}
-  }
-  if(inRial&&amount>0) amount=Math.round(amount/10);
+// Convert Rial to Toman safely
+function rialToToman(v){ return v>0?Math.round(v/10):0; }
 
-  // ---- BALANCE DETECTION ----
-  // مانده: xxx  or  موجودي: xxx ريال
-  const balPatterns=[
-    /(?:مانده|موجودي|موجودی)\s*:\s*([\d,،٬]+)\s*ريال/i,
-    /(?:مانده|موجودي|موجودی)\s*:\s*([\d,،٬]+)/i,
-    /خريدمانده\s*:\s*([\d,،٬]+)/i,
+// ---- Bank detection rules (priority order) ----
+// Each rule: { name, patterns[] — if ANY matches in raw text, bank is detected }
+const BANK_RULES=[
+  {name:'بانک ملی ایران',  p:[/بانك\s*ملي|بانک\s*ملی|bnk\.melli|bmi\.ir/i]},
+  {name:'بانک تجارت',      p:[/بانك\s*تجارت|بانک\s*تجارت|tejaratbank|tejarat\.ir/i]},
+  {name:'بانک ملت',        p:[/بانك\s*ملت|بانک\s*ملت|bankmellat|mellat\.ir/i]},
+  {name:'بانک صادرات',     p:[/بانك\s*صادرات|بانک\s*صادرات|bsi\.ir|banksaderat/i]},
+  {name:'بانک شهر',        p:[/بانك\s*شهر|بانک\s*شهر|bankshahr/i]},
+  {name:'بانک پارسیان',    p:[/پارسيان|پارسیان|parsian/i]},
+  {name:'بانک سامان',      p:[/بانك\s*سامان|بانک\s*سامان|saman\.bank|samanbank/i]},
+  {name:'بانک مسکن',       p:[/بانك\s*مسكن|بانک\s*مسکن|bank-maskan|maskan/i]},
+  {name:'بانک رفاه',       p:[/بانك\s*رفاه|بانک\s*رفاه|refah\.bank/i]},
+  {name:'بانک سپه',        p:[/بانك\s*سپه|بانک\s*سپه|banksepah/i]},
+  {name:'بانک کشاورزی',   p:[/بانك\s*كشاورزي|بانک\s*کشاورزی|agri-bank|agribank/i]},
+  {name:'بانک آینده',      p:[/بانك\s*آينده|بانک\s*آینده|ayandehbank/i]},
+  {name:'بانک پاسارگاد',  p:[/پاسارگاد|pasargad/i]},
+  {name:'بانک اقتصاد نوین',p:[/اقتصاد\s*نوين|اقتصاد\s*نوین|en\.bank|enbank/i]},
+  {name:'بانک دی',         p:[/بانك\s*دی|بانک\s*دی\b|dei\.bank/i]},
+  {name:'بانک ایران زمین', p:[/ايران\s*زمين|ایران\s*زمین|iranzamin/i]},
+  {name:'بانک خاورمیانه',  p:[/خاورميانه|خاورمیانه|middleeast/i]},
+  {name:'بانک گردشگری',   p:[/گردشگري|گردشگری|tourismbank/i]},
+  {name:'بانک قرض‌الحسنه مهر',p:[/مهر\s*ايران|مهر\s*ایران|qarzolhasaneh/i]},
+  {name:'پست بانک',        p:[/پست\s*بانك|پست\s*بانک|postbank/i]},
+  {name:'بانک توسعه صادرات',p:[/توسعه\s*صادرات|edbi\.ir/i]},
+  {name:'بانک صنعت و معدن',p:[/صنعت\s*و\s*معدن|bim\.ir/i]},
+];
+
+function detectBankName(raw){
+  for(const rule of BANK_RULES){
+    if(rule.p.some(re=>re.test(raw))) return rule.name;
+  }
+  return '';
+}
+
+// ---- Transaction type detection ----
+// Returns 'expense' | 'income' | '' 
+function detectTxType(txt){
+  const expWords=/برداشت|خريد|خرید|کسر|كسر|پرداخت|debited|debit|انتقال\s*از|واريز\s*از|کارمزد|بدهکار/i;
+  const incWords=/واريز|واریز|شارژ|افزایش|اعتبار|credit|credited|دريافت|دریافت|بستانکار|واريز\s*به/i;
+  const hasExp=expWords.test(txt);
+  const hasInc=incWords.test(txt);
+  // "واریز به" inside Tejarat-style messages means outgoing transfer
+  if(hasExp&&!hasInc) return 'expense';
+  if(hasInc&&!hasExp) return 'income';
+  // both present: check order — first keyword wins
+  if(hasExp&&hasInc){
+    const expIdx=txt.search(expWords);
+    const incIdx=txt.search(incWords);
+    return expIdx<incIdx?'expense':'income';
+  }
+  return '';
+}
+
+// ---- Amount extraction ----
+// Priority: labeled field (مبلغ/amount) > inline ریال > large standalone number
+function extractAmount(txt){
+  const clean=txt;
+  let amount=0, inRial=false;
+
+  const labeled=[
+    // مبلغ: 150,000,000 ریال  or  مبلغ:150000000ريال
+    {re:/مبلغ\s*:?\s*([\d,،٬]+)\s*ريال/i,  rial:true},
+    {re:/مبلغ\s*:?\s*([\d,،٬]+)\s*تومان/i, rial:false},
+    {re:/مبلغ\s*:?\s*([\d,،٬]+)/i,          rial:null}, // decide later
+    // برداشت/واریز/خرید labeled fields (Bank Melli style)
+    {re:/(?:برداشت|واريز|واریز|خريد|خرید)\s*:\s*([\d,،٬]+)/i, rial:false},
+    // مبلغ تراکنش
+    {re:/مبلغ\s*تراكنش\s*:?\s*([\d,،٬]+)\s*ريال/i, rial:true},
+    {re:/مبلغ\s*تراكنش\s*:?\s*([\d,،٬]+)/i,         rial:null},
+    // Inline: 150,000,000 ریال (large numbers only)
+    {re:/([\d]{1,3}(?:[,،٬]\d{3}){2,})\s*ريال/i, rial:true},
+    {re:/([\d]{1,3}(?:[,،٬]\d{3}){2,})\s*تومان/i, rial:false},
   ];
-  for(const re of balPatterns){
-    const m=re.exec(txt);
+
+  for(const {re,rial} of labeled){
+    const m=re.exec(clean);
     if(m){
-      const v=parseFloat(m[1].replace(/[,،٬]/g,''))||0;
+      const v=parseNum(m[1]);
       if(v>0){
-        balance=v;
-        balInRial=/ريال/i.test(m[0]);
+        amount=v;
+        // if rial===null, guess from magnitude: values >=10× typical toman → rial
+        inRial= rial!==null ? rial : v>=100000;
         break;
       }
     }
   }
-  if(balInRial&&balance>0) balance=Math.round(balance/10);
 
-  // ---- DATE DETECTION ----
-  const dateM=/1[34]\d{2}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12]\d|3[01])/.exec(txt);
-  if(dateM){
-    jYear=parseInt(dateM[0].split(/[\/\-]/)[0]);
-    jMon=parseInt(dateM[0].split(/[\/\-]/)[1])-1;
-    jDay=parseInt(dateM[0].split(/[\/\-]/)[2]);
-  } else {const t=today();jDay=t.d;jMon=t.m-1;jYear=t.y;}
+  if(inRial&&amount>0) amount=rialToToman(amount);
+  return amount;
+}
 
-  // ---- BANK NAME ----
-  if(!bankName){
-    if(/تجارت/i.test(raw)) bankName='بانک تجارت';
-    else if(/شهر/i.test(raw)) bankName='بانک شهر';
-    else if(/ملي|ملی/i.test(raw)) bankName='بانک ملی';
-    else if(/ملت/i.test(raw)) bankName='بانک ملت';
-    else if(/صادرات/i.test(raw)) bankName='بانک صادرات';
-    else if(/پارسيان|پارسیان/i.test(raw)) bankName='بانک پارسیان';
-    else if(/سامان/i.test(raw)) bankName='بانک سامان';
-    else if(/مسكن|مسکن/i.test(raw)) bankName='بانک مسکن';
+// ---- Balance extraction ----
+function extractBalance(txt){
+  const patterns=[
+    {re:/(?:مانده|موجودي|موجودی)\s*:?\s*([\d,،٬]+)\s*ريال/i, rial:true},
+    {re:/(?:مانده|موجودي|موجودی)\s*:?\s*([\d,،٬]+)\s*تومان/i,rial:false},
+    {re:/(?:مانده|موجودي|موجودی)\s*:?\s*([\d,،٬]+)/i,        rial:null},
+    {re:/خريدمانده\s*:?\s*([\d,،٬]+)/i,                       rial:null},
+    {re:/مانده\s*حساب\s*:?\s*([\d,،٬]+)\s*ريال/i,             rial:true},
+    {re:/مانده\s*حساب\s*:?\s*([\d,،٬]+)/i,                    rial:null},
+  ];
+  for(const {re,rial} of patterns){
+    const m=re.exec(txt);
+    if(m){
+      const v=parseNum(m[1]);
+      if(v>0){
+        const isRial= rial!==null ? rial : v>=100000;
+        return isRial?rialToToman(v):v;
+      }
+    }
   }
+  return 0;
+}
 
+// ---- Date extraction (Jalali) ----
+function extractDate(txt){
+  const t=today();
+  // Full date: 1405/03/30 or 1405-03-30 or 14050330
+  const full=/\b(1[34]\d{2})[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12]\d|3[01])\b/.exec(txt);
+  if(full) return {y:+full[1], m:+full[2]-1, d:+full[3]};
+  // Compact 8-digit: 14050330
+  const compact=/\b(1[34]\d{2})(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])\b/.exec(txt);
+  if(compact) return {y:+compact[1], m:+compact[2]-1, d:+compact[3]};
+  return {y:t.y, m:t.m-1, d:t.d};
+}
+
+// ---- Card number masking in description ----
+function maskCard(txt){
+  return txt.replace(/(\d{4})[*\-]?(\d{4})[*\-]?(\*{4})[*\-]?(\d{4})/g,'****-****-****-$4')
+            .replace(/\d{16}/g, s=>'****-****-****-'+s.slice(-4));
+}
+
+// ---- Main parse function ----
+function parseSms(){
+  const raw=document.getElementById('smst').value;
+  if(!raw.trim()){ntf('⚠️ متن پیامک را وارد کنید');return;}
+
+  // Normalize digits
+  const txt=normDigits(raw);
+
+  const bankName  = detectBankName(raw);
+  const txType    = detectTxType(txt);
+  const amount    = extractAmount(txt);
+  const balance   = extractBalance(txt);
+  const date      = extractDate(txt);
+
+  // Build result panel
   const res=document.getElementById('smsr');
   res.style.display='block';
 
-  let resultHtml='<div class="smsbox"><div class="smsd"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>';
-  resultHtml+=bankName?bankName+' — ':'';
-  resultHtml+='تشخیص پیامک</div>';
+  const typeLabel = txType==='income'
+    ?'<span style="color:var(--gr);font-weight:700">واریز ↑</span>'
+    : txType==='expense'
+    ?'<span style="color:var(--rd);font-weight:700">برداشت ↓</span>'
+    :'<span style="color:var(--am)">نامشخص</span>';
 
-  if(amount>0){
-    resultHtml+=`مبلغ: <strong>${nf(amount)} تومان</strong>`;
-    if(jDay) resultHtml+=`<br>تاریخ: <strong>${toFa(jDay)} ${MFA[jMon]} ${toFa(jYear)}</strong>`;
-  } else {
-    resultHtml+='<span style="color:var(--rd)">⚠️ مبلغی تشخیص داده نشد</span>';
-  }
+  const amountHtml = amount>0
+    ?`<div style="font-size:22px;font-weight:800;color:var(--t1);margin:8px 0 2px">${nf(amount)} <span style="font-size:13px;font-weight:600;color:var(--t3)">تومان</span></div>`
+    :`<div style="color:var(--rd);font-weight:600;margin:8px 0">⚠️ مبلغی تشخیص داده نشد — لطفاً دستی وارد کنید</div>`;
 
-  if(balance>0){
-    resultHtml+=`<br>موجودی حساب: <strong style="color:var(--pr)">${nf(balance)} تومان</strong>`;
-  }
-  resultHtml+='</div>';
-  res.innerHTML=resultHtml;
+  const dateHtml=`<div style="font-size:12.5px;color:var(--t2);margin-top:4px">📅 ${toFa(date.d)} ${MFA[date.m]} ${toFa(date.y)}</div>`;
+  const balHtml=balance>0
+    ?`<div style="font-size:12px;color:var(--pr);margin-top:6px;font-weight:600">💰 موجودی: ${nf(balance)} تومان</div>`:'';
 
+  res.innerHTML=`
+  <div class="smsbox">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+      <div style="font-size:12px;font-weight:700;color:var(--t3)">نتیجه تشخیص</div>
+      ${typeLabel}
+    </div>
+    ${amountHtml}
+    ${dateHtml}
+    ${balHtml}
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+      <label style="font-size:11.5px;color:var(--t3);font-weight:600;display:block;margin-bottom:5px">بانک تشخیص داده‌شده</label>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="sms-bank-edit" value="${bankName}"
+          placeholder="نام بانک..."
+          style="flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:10px;font-family:'Vazirmatn',sans-serif;font-size:13px;font-weight:600;color:var(--t1);background:var(--bg)">
+        <button onclick="smsApplyBank()" style="padding:8px 12px;border-radius:10px;border:none;background:var(--prl);color:var(--pr);font-family:'Vazirmatn',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">اعمال</button>
+      </div>
+      ${(ST.accounts||[]).length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:7px">${(ST.accounts).map(a=>`<button onclick="document.getElementById('sms-bank-edit').value='${a.bank}'" style="padding:5px 9px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-family:'Vazirmatn',sans-serif;font-size:11.5px;font-weight:600;color:var(--t2);cursor:pointer">${a.bank}</button>`).join('')}</div>`:''}
+    </div>
+  </div>`;
+
+  // Show form
   document.getElementById('smsf').style.display='block';
-  if(amount>0){
-    document.getElementById('samt').value=amount;
-  }
-  document.getElementById('sday').value=jDay||today().d;
-  fillMon('smon', jMon>=0?jMon:today().m-1);
-  document.getElementById('syr').value=jYear||today().y;
-  document.getElementById('sdsc').value=bankName||'';
-  sst('expense');
+  if(amount>0) document.getElementById('samt').value=amount;
+  document.getElementById('sday').value=date.d;
+  fillMon('smon', date.m);
+  document.getElementById('syr').value=date.y;
+  // Description: bank name + masked card if present
+  const cardM=/(شماره\s*كارت|شماره\s*کارت)\s*:?\s*([\d\*\-]{13,19})/i.exec(txt);
+  const cardSuffix=cardM?' · '+maskCard(cardM[0]).replace(/.*(\*{4}-\d{4})$/,'$1'):'';
+  document.getElementById('sdsc').value=(bankName||'پیامک بانکی')+cardSuffix;
 
-  // If balance detected and accounts exist, offer to update
+  // Auto-set type
+  if(txType) sst(txType); else sst('expense');
+
+  // Balance update offer
   if(balance>0&&(ST.accounts||[]).length>0){
     const balBtn=document.createElement('button');
     balBtn.className='btn btns';
     balBtn.style.marginTop='8px';
-    balBtn.innerHTML='📊 بروزرسانی موجودی '+(bankName||'حساب');
-    balBtn.onclick=()=>{cls('smsm');openBalanceUpdate(balance,bankName);};
+    balBtn.innerHTML='📊 بروزرسانی موجودی حساب';
+    balBtn.onclick=()=>{
+      const bk=document.getElementById('sms-bank-edit')?.value||bankName;
+      cls('smsm');openBalanceUpdate(balance,bk);
+    };
     res.appendChild(balBtn);
   }
+}
+
+// Apply bank name change to description field
+function smsApplyBank(){
+  const bk=document.getElementById('sms-bank-edit')?.value?.trim();
+  if(!bk) return;
+  const dsc=document.getElementById('sdsc');
+  // Replace bank prefix in description (everything before ' · ' or whole string)
+  const parts=(dsc.value||'').split(' · ');
+  parts[0]=bk;
+  dsc.value=parts.join(' · ');
+  ntf('✅ نام بانک اعمال شد');
 }
 
 function sst(tp){
